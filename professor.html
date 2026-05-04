@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OEA — Painel do Professor</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f4f8;--surface:#fff;--surface2:#e8f0f8;
+  --border:#c5d5e8;--blue:#1a3a6b;--blue2:#2a5298;--blue3:#3a6bc4;
+  --gold:#c8960a;--red:#b02020;--green2:#2a8a4a;
+  --text:#1a2a3a;--muted:#4a6a8a;--white:#fff;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open Sans',sans-serif;overflow:hidden}
+.hdr{display:flex;align-items:center;gap:12px;padding:8px 16px;background:var(--blue);border-bottom:3px solid var(--gold);flex-shrink:0}
+.hdr-logo{width:34px;height:34px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.hdr-left{display:flex;flex-direction:column}
+.hdr-org{font-size:8px;color:rgba(255,255,255,0.65);letter-spacing:3px;text-transform:uppercase}
+.hdr-title{font-family:'Merriweather',serif;font-size:13px;color:#fff;font-weight:700}
+.badge{background:var(--gold);color:var(--blue);font-size:8px;padding:2px 8px;letter-spacing:1px;font-weight:700;border-radius:2px}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#4adc7a;box-shadow:0 0 6px #4adc7a;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.hdr-btn{background:transparent;border:1px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.8);font-size:9px;padding:4px 10px;border-radius:3px;cursor:pointer;font-family:inherit;font-weight:600}
+.hdr-btn:hover{background:rgba(255,255,255,0.1)}
+.layout{display:flex;height:calc(100vh - 50px);overflow:hidden}
+.left-panel{width:280px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;background:#fff}
+.main-panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.right-panel{width:300px;flex-shrink:0;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;background:#fff}
+.panel-title{font-size:9px;color:var(--blue2);letter-spacing:3px;padding:9px 14px;border-bottom:1px solid var(--border);text-transform:uppercase;background:var(--surface2);font-weight:700;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+.panel-scroll{flex:1;overflow-y:auto;padding:10px}
+/* ALUNOS */
+.aluno-card{background:#fff;border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:8px;cursor:pointer;transition:all 0.15s;position:relative}
+.aluno-card:hover{border-color:var(--blue3);box-shadow:0 2px 8px rgba(42,82,152,0.1)}
+.aluno-card.active{border-color:var(--blue2);box-shadow:0 2px 8px rgba(42,82,152,0.15)}
+.aluno-card.online::before{content:'';position:absolute;top:10px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--green2);box-shadow:0 0 4px var(--green2)}
+.aluno-nome{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px}
+.aluno-pais{font-size:11px;color:var(--blue2);margin-bottom:3px}
+.aluno-ult{font-size:9px;color:var(--muted)}
+.aluno-stats{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.stat-pill{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:2px 8px;font-size:9px;color:var(--muted);font-weight:600}
+.stat-pill.msg{border-color:#a0bdd8;color:var(--blue2)}
+.stat-pill.res{border-color:#c8960a;color:var(--gold)}
+.stat-pill.vot{border-color:#2a8a4a;color:var(--green2)}
+/* FEED */
+.feed-item{background:#fff;border:1px solid var(--border);border-radius:4px;padding:10px 12px;margin-bottom:6px;border-left:3px solid var(--border)}
+.feed-item.mensagem{border-left-color:var(--blue3)}
+.feed-item.resolucao{border-left-color:var(--gold)}
+.feed-item.votacao{border-left-color:var(--green2)}
+.feed-item.escolheu_pais{border-left-color:#8a5adc}
+.feed-item.jornal{border-left-color:#dc8a5a}
+.feed-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.feed-aluno{font-size:10px;font-weight:700;color:var(--blue2)}
+.feed-tipo{font-size:9px;padding:1px 6px;border-radius:8px;font-weight:600}
+.feed-tipo.mensagem{background:#e8f0f8;color:var(--blue2)}
+.feed-tipo.resolucao{background:#fff8e0;color:var(--gold)}
+.feed-tipo.votacao{background:#e8f8e8;color:var(--green2)}
+.feed-tipo.escolheu_pais{background:#f0e8f8;color:#8a5adc}
+.feed-tipo.jornal{background:#f8f0e8;color:#dc8a5a}
+.feed-text{font-size:10px;color:var(--text);line-height:1.5}
+.feed-time{font-size:8px;color:var(--muted);margin-top:3px}
+/* DETALHE ALUNO */
+.detalhe-wrap{flex:1;overflow-y:auto;padding:12px}
+.detalhe-vazio{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--muted);text-align:center;gap:8px}
+.detalhe-header{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:10px}
+.detalhe-nome{font-size:14px;font-weight:700;color:var(--blue);margin-bottom:3px}
+.detalhe-sub{font-size:10px;color:var(--muted)}
+.detalhe-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px}
+.d-stat{background:#fff;border:1px solid var(--border);border-radius:4px;padding:6px;text-align:center}
+.d-stat-num{font-size:16px;font-weight:700;color:var(--blue2)}
+.d-stat-label{font-size:8px;color:var(--muted);margin-top:1px}
+.atividade-item{background:#fff;border:1px solid var(--border);border-radius:4px;padding:8px 10px;margin-bottom:5px;font-size:10px;line-height:1.5}
+.ativ-tipo{font-size:9px;font-weight:700;color:var(--blue2);margin-bottom:2px}
+.ativ-texto{color:var(--text)}
+.ativ-time{font-size:8px;color:var(--muted);margin-top:2px}
+/* RESUMO TOPO */
+.resumo-bar{display:flex;gap:10px;padding:8px 14px;background:#fff;border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
+.resumo-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--muted)}
+.resumo-num{font-size:14px;font-weight:700;color:var(--blue2)}
+.resumo-sep{color:var(--border);font-size:16px}
+/* TURMA INPUT */
+.turma-bar{display:flex;gap:8px;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);flex-shrink:0;align-items:center}
+.turma-input{flex:1;border:1px solid var(--border);border-radius:3px;padding:6px 10px;font-family:inherit;font-size:11px;outline:none;background:#fff}
+.turma-input:focus{border-color:var(--blue3)}
+.turma-btn{background:var(--blue2);color:#fff;border:none;padding:6px 14px;border-radius:3px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer}
+.turma-btn:hover{background:var(--blue3)}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center}
+.modal-overlay.hidden{display:none}
+.modal{background:#fff;border-radius:8px;padding:28px;max-width:420px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+.modal h2{font-family:'Merriweather',serif;color:var(--blue);font-size:16px;margin-bottom:8px}
+.modal p{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:14px}
+.modal input{width:100%;border:1px solid var(--border);border-radius:4px;padding:9px 12px;font-family:inherit;font-size:12px;outline:none;color:var(--text);margin-bottom:8px}
+.modal input:focus{border-color:var(--blue3)}
+.modal-btn{width:100%;background:var(--blue2);color:#fff;border:none;padding:10px;border-radius:4px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;margin-top:4px}
+.modal-btn:hover{background:var(--blue3)}
+.empty-feed{text-align:center;padding:30px;color:var(--muted);font-size:11px}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+@media(max-width:900px){.right-panel{display:none}}
+@media(max-width:600px){.left-panel{width:220px}}
+</style>
+</head>
+<body>
+
+<div class="modal-overlay" id="modalSenha">
+  <div class="modal">
+    <h2>🔐 Painel do Professor</h2>
+    <p>Digite a senha do professor para acessar o painel de monitoramento.</p>
+    <input type="password" id="senhaInput" placeholder="Senha..." onkeydown="if(event.key==='Enter')verificarSenha()"/>
+    <button class="modal-btn" onclick="verificarSenha()">Entrar →</button>
+    <p style="margin-top:10px;font-size:10px;color:var(--muted);text-align:center">Senha padrão: <strong>professor2025</strong> — altere no código</p>
+  </div>
+</div>
+
+<div class="hdr">
+  <div class="status-dot"></div>
+  <div class="hdr-logo">👨‍🏫</div>
+  <div class="hdr-left">
+    <div class="hdr-org">Painel de Monitoramento · OEA Model UN</div>
+    <div class="hdr-title">Gabinete do Professor — Tempo Real</div>
+  </div>
+  <div class="badge">MONITORANDO</div>
+  <div class="hdr-right">
+    <span style="font-size:10px;color:rgba(255,255,255,0.8)" id="hdrTurma">Nenhuma turma</span>
+    <button class="hdr-btn" onclick="exportarRelatorio()">📊 Exportar Relatório</button>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- ALUNOS -->
+  <div class="left-panel">
+    <div class="panel-title">
+      <span>👥 Alunos Ativos</span>
+      <span id="totalAlunos" style="background:var(--blue2);color:#fff;font-size:9px;padding:2px 8px;border-radius:10px;font-weight:700">0</span>
+    </div>
+    <div class="turma-bar">
+      <input class="turma-input" type="text" id="turmaInput" placeholder="Código da turma (ex: turma-2025-A)" onkeydown="if(event.key==='Enter')conectarTurma()"/>
+      <button class="turma-btn" onclick="conectarTurma()">▶ Monitorar</button>
+    </div>
+    <div class="panel-scroll" id="alunosList">
+      <div class="empty-feed">
+        <div style="font-size:24px;margin-bottom:8px">👥</div>
+        <div>Digite o código da turma acima<br>e clique em Monitorar</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEED CENTRAL -->
+  <div class="main-panel">
+    <div class="resumo-bar">
+      <div class="resumo-item"><span class="resumo-num" id="resumoAlunos">0</span><span>alunos</span></div>
+      <div class="resumo-sep">|</div>
+      <div class="resumo-item"><span class="resumo-num" id="resumoMsgs">0</span><span>mensagens</span></div>
+      <div class="resumo-sep">|</div>
+      <div class="resumo-item"><span class="resumo-num" id="resumoRes">0</span><span>resoluções</span></div>
+      <div class="resumo-sep">|</div>
+      <div class="resumo-item"><span class="resumo-num" id="resumoVot">0</span><span>votações</span></div>
+      <div class="resumo-sep">|</div>
+      <div class="resumo-item" id="resumoStatus" style="color:var(--muted)">⚪ Aguardando turma</div>
+    </div>
+    <div class="panel-title"><span>📡 Feed de Atividades em Tempo Real</span></div>
+    <div class="panel-scroll" id="feedAtividades">
+      <div class="empty-feed">
+        <div style="font-size:28px;margin-bottom:8px">📡</div>
+        <div>As atividades dos alunos aparecerão aqui<br>em tempo real assim que começarem</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETALHE ALUNO -->
+  <div class="right-panel">
+    <div class="panel-title"><span>🔍 Detalhe do Aluno</span></div>
+    <div class="detalhe-wrap" id="detalheWrap">
+      <div class="detalhe-vazio">
+        <div style="font-size:28px">👆</div>
+        <div style="font-size:11px">Clique em um aluno<br>para ver o detalhamento</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FIREBASE SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, collection, onSnapshot, query, orderBy, limit, doc, onSnapshot as onSnap } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const fb = initializeApp({
+  apiKey: "AIzaSyDAebTSplrmE5n9evLmRvJFzgI3pxBW_sQ",
+  authDomain: "oea-model-un.firebaseapp.com",
+  projectId: "oea-model-un",
+  storageBucket: "oea-model-un.firebasestorage.app",
+  messagingSenderId: "791765339095",
+  appId: "1:791765339095:web:acbf883113aa8ce2f49992"
+});
+
+const db = getFirestore(fb);
+window._db = db;
+window._fbCol = collection;
+window._fbOnSnapshot = onSnapshot;
+window._fbQuery = query;
+window._fbOrderBy = orderBy;
+window._fbLimit = limit;
+window._fbReady = true;
+</script>
+
+<script>
+const SENHA = 'professor2025';
+let turmaAtual = '';
+let unsubAlunos = null, unsubFeed = null;
+let dadosAlunos = {};
+let contadores = { msgs: 0, res: 0, vot: 0 };
+
+function verificarSenha() {
+  const s = document.getElementById('senhaInput').value;
+  if (s === SENHA) {
+    document.getElementById('modalSenha').classList.add('hidden');
+  } else {
+    document.getElementById('senhaInput').style.borderColor = '#b02020';
+    setTimeout(() => document.getElementById('senhaInput').style.borderColor = '', 1500);
+  }
+}
+
+function conectarTurma() {
+  const code = document.getElementById('turmaInput').value.trim();
+  if (!code) { alert('Digite o código da turma.'); return; }
+  turmaAtual = code;
+  document.getElementById('hdrTurma').textContent = 'Turma: ' + code;
+  document.getElementById('resumoStatus').innerHTML = '🟢 Monitorando: <strong>' + code + '</strong>';
+  contadores = { msgs: 0, res: 0, vot: 0 };
+
+  // Cancela listeners anteriores
+  if (unsubAlunos) unsubAlunos();
+  if (unsubFeed) unsubFeed();
+
+  iniciarMonitoramento(code);
+}
+
+function iniciarMonitoramento(code) {
+  if (!window._fbReady) { setTimeout(() => iniciarMonitoramento(code), 500); return; }
+
+  const db = window._db;
+  const { _fbCol: col, _fbOnSnapshot: onSnap, _fbQuery: q, _fbOrderBy: orderBy, _fbLimit: lim } = window;
+
+  // Monitora alunos
+  unsubAlunos = onSnap(col(db, 'sessoes', code, 'alunos'), (snap) => {
+    dadosAlunos = {};
+    snap.forEach(doc => { dadosAlunos[doc.id] = doc.data(); });
+    renderAlunos();
+    document.getElementById('totalAlunos').textContent = snap.size;
+    document.getElementById('resumoAlunos').textContent = snap.size;
+  });
+
+  // Monitora feed de atividades (últimas 50)
+  unsubFeed = onSnap(q(col(db, 'sessoes', code, 'atividades'), orderBy('timestamp', 'desc'), lim(50)), (snap) => {
+    contadores = { msgs: 0, res: 0, vot: 0 };
+    const items = [];
+    snap.forEach(doc => {
+      const d = doc.data();
+      items.push(d);
+      if (d.tipo === 'mensagem') contadores.msgs++;
+      if (d.tipo === 'resolucao') contadores.res++;
+      if (d.tipo === 'votacao') contadores.vot++;
+    });
+    document.getElementById('resumoMsgs').textContent = contadores.msgs;
+    document.getElementById('resumoRes').textContent = contadores.res;
+    document.getElementById('resumoVot').textContent = contadores.vot;
+    renderFeed(items);
+  });
+}
+
+function renderAlunos() {
+  const list = document.getElementById('alunosList');
+  const alunos = Object.values(dadosAlunos);
+  if (alunos.length === 0) {
+    list.innerHTML = '<div class="empty-feed"><div style="font-size:20px;margin-bottom:6px">⏳</div><div>Aguardando alunos entrarem<br>na sessão com o código:<br><strong>' + turmaAtual + '</strong></div></div>';
+    return;
+  }
+  list.innerHTML = '';
+  alunos.forEach(a => {
+    const card = document.createElement('div');
+    card.className = 'aluno-card online';
+    card.onclick = () => mostrarDetalhe(a.nome);
+    const ts = a.timestamp?.toDate ? a.timestamp.toDate().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'}) : '—';
+    card.innerHTML = '<div class="aluno-nome">' + a.nome + '</div>'
+      + '<div class="aluno-pais">🌍 ' + (a.pais_atual || '—') + '</div>'
+      + '<div class="aluno-ult">Última ação: ' + formatTipo(a.ultima_atividade || '—') + ' · ' + ts + '</div>';
+    list.appendChild(card);
+  });
+}
+
+function renderFeed(items) {
+  const feed = document.getElementById('feedAtividades');
+  if (items.length === 0) {
+    feed.innerHTML = '<div class="empty-feed"><div style="font-size:28px;margin-bottom:8px">📡</div><div>Nenhuma atividade registrada ainda</div></div>';
+    return;
+  }
+  feed.innerHTML = '';
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'feed-item ' + (item.tipo || '');
+    const ts = item.timestamp?.toDate ? item.timestamp.toDate().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit',second:'2-digit'}) : '';
+    let texto = '';
+    if (item.tipo === 'mensagem') texto = '<strong>Perguntou:</strong> ' + (item.texto || '').substring(0, 120);
+    else if (item.tipo === 'resolucao') texto = '<strong>Resolução:</strong> ' + (item.titulo || '') + ' (' + (item.tipo_doc || item.tipo || '') + ')';
+    else if (item.tipo === 'votacao') texto = '<strong>Votação:</strong> ' + (item.titulo || '') + ' — ' + (item.aprovado ? '✅ Aprovada' : '❌ Rejeitada');
+    else if (item.tipo === 'escolheu_pais') texto = '<strong>Escolheu o país:</strong> ' + (item.pais_escolhido || item.pais || '');
+    else if (item.tipo === 'jornal') texto = '<strong>Jornal gerado:</strong> ' + (item.veiculo || '') + (item.manchete ? ' — "' + item.manchete.substring(0, 60) + '"' : '');
+    else if (item.tipo === 'entrou') texto = '<strong>Entrou na sessão</strong>';
+    else texto = item.tipo || '';
+
+    div.innerHTML = '<div class="feed-header">'
+      + '<span class="feed-aluno">' + (item.aluno || '') + ' · ' + (item.pais || '') + '</span>'
+      + '<span class="feed-tipo ' + (item.tipo || '') + '">' + formatTipo(item.tipo) + '</span>'
+      + '</div>'
+      + '<div class="feed-text">' + texto + '</div>'
+      + '<div class="feed-time">' + ts + '</div>';
+    feed.appendChild(div);
+  });
+}
+
+function mostrarDetalhe(nomeAluno) {
+  const wrap = document.getElementById('detalheWrap');
+  const a = Object.values(dadosAlunos).find(x => x.nome === nomeAluno);
+  if (!a) return;
+
+  // Pega atividades do aluno do feed
+  if (!window._fbReady) return;
+  const db = window._db;
+  const { _fbCol: col, _fbOnSnapshot: onSnap, _fbQuery: q, _fbOrderBy: orderBy } = window;
+
+  onSnap(q(col(db, 'sessoes', turmaAtual, 'atividades'), orderBy('timestamp', 'desc')), (snap) => {
+    const atividades = [];
+    let msgs = 0, res = 0, vot = 0;
+    snap.forEach(doc => {
+      const d = doc.data();
+      if (d.aluno === nomeAluno) {
+        atividades.push(d);
+        if (d.tipo === 'mensagem') msgs++;
+        if (d.tipo === 'resolucao') res++;
+        if (d.tipo === 'votacao') vot++;
+      }
+    });
+
+    const ts = a.timestamp?.toDate ? a.timestamp.toDate().toLocaleString('pt-BR') : '—';
+    let html = '<div class="detalhe-header">'
+      + '<div class="detalhe-nome">' + a.nome + '</div>'
+      + '<div class="detalhe-sub">País: ' + (a.pais_atual || '—') + ' · Última atividade: ' + ts + '</div>'
+      + '<div class="detalhe-stats">'
+      + '<div class="d-stat"><div class="d-stat-num">' + msgs + '</div><div class="d-stat-label">Mensagens</div></div>'
+      + '<div class="d-stat"><div class="d-stat-num">' + res + '</div><div class="d-stat-label">Resoluções</div></div>'
+      + '<div class="d-stat"><div class="d-stat-num">' + vot + '</div><div class="d-stat-label">Votações</div></div>'
+      + '</div></div>'
+      + '<div style="font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;font-weight:700">Histórico de Atividades</div>';
+
+    atividades.forEach(item => {
+      const ts2 = item.timestamp?.toDate ? item.timestamp.toDate().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'}) : '';
+      let txt = '';
+      if (item.tipo === 'mensagem') txt = '<strong>Perguntou:</strong> ' + (item.texto || '').substring(0, 200);
+      else if (item.tipo === 'resolucao') txt = '<strong>Criou resolução:</strong> ' + (item.titulo || '') + '<br><span style="color:var(--muted);font-size:9px">' + (item.texto || '').substring(0, 300) + '</span>';
+      else if (item.tipo === 'votacao') txt = '<strong>Votação:</strong> ' + (item.titulo || '') + ' — Favor: ' + (item.favor || 0) + ' / Contra: ' + (item.contra || 0) + (item.aprovado ? ' ✅' : ' ❌');
+      else if (item.tipo === 'escolheu_pais') txt = '<strong>Escolheu país:</strong> ' + (item.pais_escolhido || '');
+      else if (item.tipo === 'jornal') txt = '<strong>Jornal:</strong> ' + (item.veiculo || '') + (item.manchete ? ' — "' + item.manchete + '"' : '');
+      else if (item.tipo === 'entrou') txt = '<strong>Entrou na sessão</strong>';
+      else txt = item.tipo;
+
+      html += '<div class="atividade-item">'
+        + '<div class="ativ-tipo">' + formatTipo(item.tipo) + ' · ' + ts2 + '</div>'
+        + '<div class="ativ-texto">' + txt + '</div>'
+        + '</div>';
+    });
+
+    wrap.innerHTML = html;
+  });
+}
+
+function formatTipo(tipo) {
+  const map = {
+    mensagem: '💬 Mensagem', resolucao: '📜 Resolução', votacao: '🗳️ Votação',
+    escolheu_pais: '🌍 País', jornal: '📰 Jornal', entrou: '🚪 Entrou',
+    resposta_ia: '🤖 Resposta IA', '—': '—'
+  };
+  return map[tipo] || tipo;
+}
+
+function exportarRelatorio() {
+  if (!turmaAtual) { alert('Conecte-se a uma turma primeiro.'); return; }
+  const alunos = Object.values(dadosAlunos);
+  let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Relatório OEA — ' + turmaAtual + '</title>';
+  html += '<style>body{font-family:Arial,sans-serif;padding:24px;max-width:800px;margin:0 auto}h1{color:#1a3a6b}h2{color:#2a5298;border-bottom:1px solid #ccc;padding-bottom:4px;margin-top:20px}table{width:100%;border-collapse:collapse;margin-top:8px}td,th{border:1px solid #ddd;padding:6px 10px;text-align:left;font-size:12px}th{background:#e8f0f8;color:#1a3a6b;font-weight:700}.footer{margin-top:24px;font-size:10px;color:#999;text-align:center}</style>';
+  html += '</head><body>';
+  html += '<h1>📋 Relatório de Sessão — OEA Model UN</h1>';
+  html += '<p><strong>Turma:</strong> ' + turmaAtual + ' · <strong>Data:</strong> ' + new Date().toLocaleDateString('pt-BR') + ' · <strong>Alunos:</strong> ' + alunos.length + '</p>';
+  html += '<p><strong>Mensagens:</strong> ' + contadores.msgs + ' · <strong>Resoluções:</strong> ' + contadores.res + ' · <strong>Votações:</strong> ' + contadores.vot + '</p>';
+  html += '<h2>Alunos Participantes</h2><table><tr><th>Nome</th><th>País</th><th>Última Atividade</th></tr>';
+  alunos.forEach(a => {
+    const ts = a.timestamp?.toDate ? a.timestamp.toDate().toLocaleString('pt-BR') : '—';
+    html += '<tr><td>' + a.nome + '</td><td>' + (a.pais_atual || '—') + '</td><td>' + ts + '</td></tr>';
+  });
+  html += '</table>';
+  html += '<div class="footer">Simulação educacional · OEA Model UN · Gerado em ' + new Date().toLocaleString('pt-BR') + '</div>';
+  html += '</body></html>';
+  const b = new Blob([html], {type:'text/html'});
+  const u = URL.createObjectURL(b);
+  const a = document.createElement('a'); a.href = u; a.download = 'relatorio_oea_' + turmaAtual + '_' + new Date().toISOString().slice(0,10) + '.html';
+  a.style.display = 'none'; document.body.appendChild(a); a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(u); }, 1000);
+}
+</script>
+</body>
+</html>
