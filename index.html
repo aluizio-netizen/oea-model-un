@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>OEA — Model UN Single Player</title>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -530,8 +531,94 @@ window.generateNewspaper = async function() {
     + '<div class="np-prop"><div class="np-prop-text">' + (np.destaque || '') + '</div><div class="np-prop-sub">' + (np.destaque_sub || '') + '</div></div>'
     + '</div><div class="np-footer"><span>' + paper.name + '</span><span>Simulação educacional · OEA Model UN</span><span>' + today + '</span></div></div>';
   scroll.appendChild(edDiv);
+
+  // Botão PDF
+  const pdfDiv = document.createElement('div');
+  pdfDiv.style.cssText = 'text-align:center;padding:12px 0 8px;';
+  const pdfBtn = document.createElement('button');
+  pdfBtn.style.cssText = 'background:var(--blue2);color:#fff;border:none;padding:8px 20px;border-radius:3px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;';
+  pdfBtn.textContent = '📄 EXPORTAR EDIÇÃO EM PDF';
+  pdfBtn.onclick = function() { exportNewspaperPDF(np, paper, today); };
+  pdfDiv.appendChild(pdfBtn);
+  scroll.appendChild(pdfDiv);
+
   btn.disabled = false;
 };
+
+function exportNewspaperPDF(np, paper, today) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const margin = 18, pageW = 210, cW = pageW - margin * 2;
+  let y = 18;
+
+  function addText(text, size, color, bold) {
+    doc.setFontSize(size);
+    doc.setTextColor(...(color || [26, 42, 58]));
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    const clean = (text || '').replace(/<[^>]+>/g, '').replace(/&amp;/g, '&');
+    const lines = doc.splitTextToSize(clean, cW);
+    lines.forEach(l => {
+      if (y > 278) { doc.addPage(); y = 18; }
+      doc.text(l, margin, y); y += size * 0.45;
+    });
+    y += 2;
+  }
+
+  // Cabeçalho azul
+  doc.setFillColor(26, 58, 107);
+  doc.rect(0, 0, 210, 28, 'F');
+  doc.setFontSize(7); doc.setTextColor(200, 200, 200); doc.setFont('helvetica', 'normal');
+  doc.text('EDIÇÃO ESPECIAL · OEA 2025 · ' + today.toUpperCase(), margin, 8);
+  doc.setFontSize(14); doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold');
+  doc.text(paper.name, margin, 17);
+  doc.setFontSize(7); doc.setTextColor(180, 200, 220); doc.setFont('helvetica', 'normal');
+  doc.text(paper.sub, margin, 23);
+  y = 36;
+
+  // Linha dourada
+  doc.setDrawColor(200, 150, 10); doc.setLineWidth(0.8); doc.line(margin, y, pageW - margin, y); y += 6;
+
+  // Manchete principal
+  addText(np.manchete || '', 15, [26, 58, 107], true);
+  addText('Correspondente especial · ' + today + (np.subtitulo ? ' — ' + np.subtitulo : ''), 8, [100, 120, 140], false);
+  doc.setDrawColor(197, 213, 232); doc.setLineWidth(0.3); doc.line(margin, y, pageW - margin, y); y += 4;
+  addText(np.artigo || '', 10, [26, 42, 58], false);
+  y += 3;
+
+  // Segunda manchete
+  doc.setDrawColor(197, 213, 232); doc.setLineWidth(0.3); doc.line(margin, y, pageW - margin, y); y += 4;
+  addText(np.manchete2 || '', 12, [26, 58, 107], true);
+  addText(np.noticia2 || '', 10, [26, 42, 58], false);
+  y += 3;
+
+  // Terceira manchete
+  doc.setDrawColor(197, 213, 232); doc.setLineWidth(0.3); doc.line(margin, y, pageW - margin, y); y += 4;
+  addText(np.manchete3 || '', 12, [26, 58, 107], true);
+  addText(np.noticia3 || '', 10, [26, 42, 58], false);
+  y += 3;
+
+  // Editorial
+  doc.setDrawColor(197, 213, 232); doc.setLineWidth(0.3); doc.line(margin, y, pageW - margin, y); y += 4;
+  addText('ANÁLISE EDITORIAL', 8, [42, 82, 152], true);
+  addText(np.editorial || '', 10, [26, 42, 58], false);
+  y += 4;
+
+  // Destaque
+  if (y > 262) { doc.addPage(); y = 18; }
+  doc.setFillColor(26, 58, 107);
+  doc.rect(margin, y, cW, 18, 'F');
+  doc.setFontSize(10); doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold');
+  doc.text(doc.splitTextToSize((np.destaque || '').toUpperCase(), cW - 8), margin + 4, y + 7);
+  doc.setFontSize(8); doc.setTextColor(180, 200, 220); doc.setFont('helvetica', 'normal');
+  doc.text(np.destaque_sub || '', margin + 4, y + 15);
+  y += 24;
+
+  // Rodapé
+  doc.setFontSize(7); doc.setTextColor(140, 160, 180);
+  doc.text(paper.name + ' · Simulação educacional · OEA Model UN · ' + today, margin, 290);
+
+  doc.save(paper.name.replace(/[\s/]/g, '_') + '_' + new Date().toISOString().slice(0,10) + '.pdf');
+}
 
 function initMap() {
   const tooltip = document.getElementById('mapTooltip');
