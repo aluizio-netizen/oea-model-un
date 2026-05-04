@@ -3,39 +3,32 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>OEA — Model UN Single Player</title>
+<title>OEA — Model UN</title>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#f0f4f8;--surface:#fff;--surface2:#e8f0f8;
-  --border:#c5d5e8;--border2:#a0bdd8;
-  --blue:#1a3a6b;--blue2:#2a5298;--blue3:#3a6bc4;
-  --gold:#c8960a;--gold2:#e8b020;
-  --red:#b02020;--green:#1a6b3a;--green2:#2a8a4a;
-  --text:#1a2a3a;--muted:#4a6a8a;--dim:#8aaac4;
-  --white:#fff;
-}
+:root{--bg:#f0f4f8;--surface:#fff;--surface2:#e8f0f8;--border:#c5d5e8;--border2:#a0bdd8;--blue:#1a3a6b;--blue2:#2a5298;--blue3:#3a6bc4;--gold:#c8960a;--gold2:#e8b020;--red:#b02020;--green2:#2a8a4a;--text:#1a2a3a;--muted:#4a6a8a;--dim:#8aaac4;--white:#fff}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open Sans',sans-serif;overflow:hidden}
 .hdr{display:flex;align-items:center;gap:12px;padding:8px 16px;background:var(--blue);border-bottom:3px solid var(--gold);flex-shrink:0}
-.hdr-logo{width:34px;height:34px;background:var(--white);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.hdr-logo{width:34px;height:34px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
 .hdr-left{display:flex;flex-direction:column;gap:1px}
 .hdr-org{font-size:8px;color:rgba(255,255,255,0.65);letter-spacing:3px;text-transform:uppercase}
-.hdr-title{font-family:'Merriweather',serif;font-size:12px;color:var(--white);font-weight:700}
+.hdr-title{font-family:'Merriweather',serif;font-size:12px;color:#fff;font-weight:700}
 .hdr-theme{font-size:8px;color:rgba(255,255,255,0.55);font-style:italic}
 .badge{background:var(--gold);color:var(--blue);font-size:8px;padding:2px 8px;letter-spacing:1px;font-weight:700;border-radius:2px}
-.hdr-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:8px}
 .hdr-player{font-size:10px;color:rgba(255,255,255,0.9);font-weight:600}
-.status-dot{width:7px;height:7px;border-radius:50%;background:#4adc7a;box-shadow:0 0 6px #4adc7a;animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+.hdr-btn{background:transparent;border:1px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);font-size:9px;padding:3px 8px;border-radius:3px;cursor:pointer;font-family:inherit}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#4adc7a;box-shadow:0 0 6px #4adc7a;animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 .app{display:flex;height:calc(100vh - 50px);overflow:hidden}
-.sidebar{width:195px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;background:var(--surface)}
+.sidebar{width:190px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;background:#fff}
 .center{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.intel{width:215px;flex-shrink:0;border-left:1px solid var(--border);overflow-y:auto;background:var(--surface)}
-.ptitle{font-size:9px;color:var(--blue2);letter-spacing:3px;padding:8px 12px;border-bottom:1px solid var(--border);text-transform:uppercase;background:var(--surface2);position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:5px;font-weight:700}
-.tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--surface)}
-.tab{flex:1;background:transparent;border:none;color:var(--muted);font-family:inherit;font-size:9px;padding:9px 4px;cursor:pointer;letter-spacing:0.5px;border-bottom:2px solid transparent;transition:all 0.15s;font-weight:600}
+.intel{width:210px;flex-shrink:0;border-left:1px solid var(--border);overflow-y:auto;background:#fff}
+.ptitle{font-size:9px;color:var(--blue2);letter-spacing:3px;padding:8px 12px;border-bottom:1px solid var(--border);text-transform:uppercase;background:var(--surface2);position:sticky;top:0;z-index:2;font-weight:700}
+.tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;background:#fff}
+.tab{flex:1;background:transparent;border:none;color:var(--muted);font-family:inherit;font-size:9px;padding:9px 4px;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;font-weight:600}
 .tab:hover{color:var(--blue2)}.tab.active{color:var(--blue2);border-bottom-color:var(--blue2)}
 .tabpanel{display:none;flex:1;flex-direction:column;overflow:hidden}.tabpanel.active{display:flex}
 .dlist{overflow-y:auto;flex:1;padding:6px}
@@ -45,26 +38,26 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
 .dbtn::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue3);border-radius:3px 0 0 3px;transform:scaleY(0);transition:transform 0.15s;transform-origin:bottom}
 .dbtn:hover{border-color:var(--border2);background:var(--surface2)}.dbtn:hover::before,.dbtn.active::before{transform:scaleY(1)}
 .dbtn.active{border-color:var(--blue3);background:var(--surface2)}
-.dflag{font-size:15px;flex-shrink:0}.dname{font-size:10px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.drole{font-size:8px;color:var(--muted)}
+.dflag{font-size:14px;flex-shrink:0}.dname{font-size:10px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.drole{font-size:8px;color:var(--muted)}
 .chatlog{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
 .msg{max-width:86%}
 .msg.system{max-width:100%;background:rgba(26,58,107,0.06);border-left:3px solid var(--blue3);padding:10px 13px;font-size:11px;color:var(--muted);line-height:1.6;border-radius:0 4px 4px 0}
 .msg.user{align-self:flex-end;background:var(--blue2);border-radius:8px 8px 2px 8px;padding:9px 13px}
-.msg.user .mtext{color:var(--white);font-size:11px;line-height:1.6}
+.msg.user .mtext{color:#fff;font-size:11px;line-height:1.6}
 .msg.user .mhdr{color:rgba(255,255,255,0.8);font-size:9px;margin-bottom:4px;font-weight:700}
-.msg.ai{align-self:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:8px 8px 8px 2px;padding:9px 13px}
+.msg.ai{align-self:flex-start;background:#fff;border:1px solid var(--border);border-radius:8px 8px 8px 2px;padding:9px 13px}
 .msg.ai .mtext{color:var(--text);font-size:11px;line-height:1.7}
 .msg.ai .mhdr{font-size:9px;color:var(--blue2);margin-bottom:4px;font-weight:700}
 .msg.resolution{max-width:100%;background:#fffbf0;border:1px solid var(--gold);border-left:4px solid var(--gold2);padding:12px 14px;border-radius:0 4px 4px 0}
 .msg.vote-msg{max-width:100%;background:#f0f8f0;border:1px solid var(--green2);border-left:4px solid var(--green2);padding:12px 14px;border-radius:0 4px 4px 0}
 .mhdr-res{font-size:10px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:1px}
-.mhdr-vote{font-size:10px;font-weight:700;color:var(--green);margin-bottom:6px}
+.mhdr-vote{font-size:10px;font-weight:700;color:var(--green2);margin-bottom:6px}
 .mtext{font-size:11px;line-height:1.7;color:var(--text)}
 .typing{font-size:10px;color:var(--muted);padding:4px 14px;display:none;font-style:italic;flex-shrink:0}.typing.on{display:block}
-.inputrow{border-top:1px solid var(--border);padding:9px 12px;display:flex;gap:7px;background:var(--surface);flex-shrink:0}
+.inputrow{border-top:1px solid var(--border);padding:9px 12px;display:flex;gap:7px;background:#fff;flex-shrink:0}
 .msginput{flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);font-size:11px;padding:7px 11px;font-family:inherit;outline:none;min-width:0;border-radius:3px}
 .msginput:focus{border-color:var(--blue3)}.msginput::placeholder{color:var(--dim)}
-.sendbtn{background:var(--blue2);color:var(--white);border:none;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;border-radius:3px;transition:background 0.15s}
+.sendbtn{background:var(--blue2);color:#fff;border:none;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;border-radius:3px}
 .sendbtn:hover{background:var(--blue3)}.sendbtn:disabled{opacity:0.4;cursor:not-allowed}
 .resform{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
 .dfield{display:flex;flex-direction:column;gap:5px}
@@ -72,7 +65,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
 .dfield input,.dfield textarea,.dfield select{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:11px;padding:8px 10px;outline:none;width:100%;border-radius:3px;resize:vertical}
 .dfield textarea{min-height:80px;line-height:1.6}
 .dfield input:focus,.dfield textarea:focus,.dfield select:focus{border-color:var(--blue3)}
-.resbtn{width:100%;background:var(--blue2);color:var(--white);border:none;padding:9px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;border-radius:3px;transition:background 0.15s;margin-top:4px}
+.resbtn{width:100%;background:var(--blue2);color:#fff;border:none;padding:9px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;border-radius:3px;margin-top:4px}
 .resbtn:hover{background:var(--blue3)}.resbtn:disabled{opacity:0.4;cursor:not-allowed}
 .resbtn.sec{background:transparent;border:1px solid var(--border);color:var(--muted);margin-top:0}
 .resbtn.sec:hover{border-color:var(--blue3);color:var(--blue2)}
@@ -80,12 +73,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
 .np-wrap{display:flex;flex-direction:column;height:100%;overflow:hidden}
 .np-controls{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--surface2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
 .np-side-btns{display:flex;gap:5px;flex-wrap:wrap}
-.np-btn{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:inherit;font-size:9px;padding:4px 8px;cursor:pointer;transition:all 0.15s;border-radius:3px;font-weight:600}
-.np-btn:hover,.np-btn.active{border-color:var(--blue2);color:var(--blue2);background:var(--white)}
-.np-gen-btn{background:var(--blue2);color:var(--white);border:none;padding:5px 12px;font-size:9px;font-weight:700;cursor:pointer;font-family:inherit;margin-left:auto;transition:background 0.15s;border-radius:3px}
+.np-btn{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:inherit;font-size:9px;padding:4px 8px;cursor:pointer;border-radius:3px;font-weight:600}
+.np-btn:hover,.np-btn.active{border-color:var(--blue2);color:var(--blue2);background:#fff}
+.np-gen-btn{background:var(--blue2);color:#fff;border:none;padding:5px 12px;font-size:9px;font-weight:700;cursor:pointer;font-family:inherit;margin-left:auto;border-radius:3px}
 .np-gen-btn:hover{background:var(--blue3)}.np-gen-btn:disabled{opacity:0.4;cursor:not-allowed}
 .np-scroll{flex:1;overflow-y:auto;padding:12px;background:var(--bg)}
-.np-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--muted);text-align:center}
+.np-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--muted);text-align:center;gap:8px}
 .np-edition{font-family:Georgia,serif;width:100%;background:#fff;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,0.08)}
 .np-hdr{text-align:center;padding:10px 14px 8px;border-bottom:2px solid var(--blue)}
 .np-hdr-top{display:flex;justify-content:space-between;font-size:8px;color:var(--muted);margin-bottom:5px;font-family:'Open Sans',sans-serif}
@@ -100,56 +93,69 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
 .np-side{border-right:1px solid var(--border);padding-right:8px}.np-side:last-child{border-right:none;padding-right:0}
 .np-side-head{font-size:10px;font-weight:700;color:var(--blue);margin-bottom:3px;border-top:1px solid var(--border);padding-top:6px;font-family:'Merriweather',serif}
 .np-side-text{font-size:8px;line-height:1.5;color:var(--text);text-align:justify}
-.np-prop{grid-column:1/-1;background:var(--blue);color:var(--white);text-align:center;padding:8px;margin-top:4px}
+.np-prop{grid-column:1/-1;background:var(--blue);color:#fff;text-align:center;padding:8px;margin-top:4px}
 .np-prop-text{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
 .np-prop-sub{font-size:8px;opacity:0.8;margin-top:2px}
 .np-footer{border-top:1px solid var(--border);padding:4px 14px;display:flex;justify-content:space-between;font-size:7px;color:var(--muted);font-family:'Open Sans',sans-serif}
 .np-loading{display:flex;align-items:center;justify-content:center;height:80px;font-size:10px;color:var(--muted);font-style:italic}
 .map-wrap{display:flex;flex-direction:column;height:100%;overflow:hidden;background:var(--surface2)}
-.map-legend{display:flex;gap:12px;padding:6px 12px;background:var(--surface);border-bottom:1px solid var(--border);font-size:9px;color:var(--muted);flex-wrap:wrap;flex-shrink:0;align-items:center}
+.map-legend{display:flex;gap:10px;padding:6px 12px;background:#fff;border-bottom:1px solid var(--border);font-size:9px;color:var(--muted);flex-wrap:wrap;flex-shrink:0;align-items:center}
 .leg-item{display:flex;align-items:center;gap:4px;font-weight:600}
-.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.leg-dot{width:9px;height:9px;border-radius:50%}
 .map-container{flex:1;overflow:auto;padding:8px;display:flex;justify-content:center;position:relative}
 .country{cursor:pointer;transition:opacity 0.15s}.country:hover{opacity:0.75}
-.map-tooltip{position:fixed;background:var(--blue);color:var(--white);padding:8px 12px;border-radius:4px;font-size:10px;max-width:220px;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,0.3);pointer-events:none;line-height:1.5}
+.map-tooltip{position:fixed;background:var(--blue);color:#fff;padding:8px 12px;border-radius:4px;font-size:10px;max-width:220px;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,0.3);pointer-events:none;line-height:1.5}
 .map-tooltip.hidden{display:none}.map-tooltip strong{display:block;font-size:12px;margin-bottom:3px}
 .intel-inner{padding:8px;display:flex;flex-direction:column;gap:8px}
-.icard{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:10px}
+.icard{background:#fff;border:1px solid var(--border);border-radius:4px;padding:10px}
 .icard h3{font-size:9px;color:var(--blue2);letter-spacing:2px;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:5px;font-weight:700}
 .icard h3::after{content:'';flex:1;height:1px;background:var(--border)}
 .irow{display:flex;justify-content:space-between;font-size:10px;padding:3px 0;border-bottom:1px solid rgba(197,213,232,0.5);gap:6px}
 .irow:last-child{border-bottom:none}.irow span:first-child{color:var(--muted)}
 .ival{font-weight:600;text-align:right}.ival.g{color:var(--green2)}.ival.r{color:var(--red)}.ival.a{color:var(--gold)}.ival.b{color:var(--blue3)}
 .actbtn{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--muted);font-size:10px;padding:7px 10px;text-align:left;cursor:pointer;font-family:inherit;transition:all 0.15s;margin-bottom:4px;border-radius:3px;line-height:1.4}
-.actbtn:hover{border-color:var(--blue3);color:var(--blue2);background:var(--white)}
-/* API KEY MODAL */
+.actbtn:hover{border-color:var(--blue3);color:var(--blue2);background:#fff}
+/* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center}
 .modal-overlay.hidden{display:none}
 .modal{background:#fff;border-radius:8px;padding:28px;max-width:440px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.3)}
 .modal h2{font-family:'Merriweather',serif;color:var(--blue);font-size:16px;margin-bottom:8px}
 .modal p{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:14px}
-.modal input{width:100%;border:1px solid var(--border);border-radius:4px;padding:9px 12px;font-family:monospace;font-size:12px;outline:none;color:var(--text)}
+.modal input{width:100%;border:1px solid var(--border);border-radius:4px;padding:9px 12px;font-family:inherit;font-size:12px;outline:none;color:var(--text);margin-bottom:8px}
 .modal input:focus{border-color:var(--blue3)}
-.modal-btn{width:100%;background:var(--blue2);color:#fff;border:none;padding:10px;border-radius:4px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;margin-top:12px;transition:background 0.15s}
+.modal-btn{width:100%;background:var(--blue2);color:#fff;border:none;padding:10px;border-radius:4px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;margin-top:4px}
 .modal-btn:hover{background:var(--blue3)}
 .modal-note{font-size:10px;color:var(--dim);margin-top:8px;text-align:center}
+.fb-badge{position:fixed;bottom:10px;right:10px;background:rgba(26,58,107,0.9);color:#fff;font-size:9px;padding:4px 10px;border-radius:10px;z-index:100;display:flex;align-items:center;gap:5px}
+.fb-dot{width:6px;height:6px;border-radius:50%;background:#4adc7a;animation:pulse 2s ease-in-out infinite}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-@media(max-width:700px){.sidebar{width:150px}.intel{display:none}.drole{display:none}}
+@media(max-width:700px){.sidebar{width:140px}.intel{display:none}}
 @media(max-width:480px){.sidebar{display:none}}
 </style>
 </head>
 <body>
 
-<!-- API KEY MODAL -->
-<div class="modal-overlay" id="modalOverlay">
+<div class="modal-overlay" id="modalName">
   <div class="modal">
-    <h2>🔑 Chave de API necessária</h2>
-    <p>Para usar o Simulador OEA Model UN, insira sua chave de API da Anthropic. Ela fica salva apenas neste navegador (localStorage) e nunca é enviada a nenhum servidor externo.</p>
-    <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." />
-    <button class="modal-btn" onclick="saveApiKey()">Entrar na Sessão →</button>
-    <div class="modal-note">Obtenha sua chave em <strong>console.anthropic.com</strong> → API Keys</div>
+    <h2>👤 Identificação do Aluno</h2>
+    <p>Digite seu nome e o código da turma fornecido pelo professor. Sua participação será monitorada em tempo real.</p>
+    <input type="text" id="studentNameInput" placeholder="Seu nome completo..."/>
+    <input type="text" id="studentCodeInput" placeholder="Código da turma (ex: turma-2025-A)..."/>
+    <button class="modal-btn" onclick="saveStudentName()">Entrar na Sessão →</button>
   </div>
 </div>
+
+<div class="modal-overlay hidden" id="modalApi">
+  <div class="modal">
+    <h2>🔑 Chave de API</h2>
+    <p>Insira sua chave de API da Anthropic para ativar o assistente de IA.</p>
+    <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..."/>
+    <button class="modal-btn" onclick="saveApiKey()">Salvar →</button>
+    <div class="modal-note">Obtenha em <strong>console.anthropic.com</strong> → API Keys</div>
+  </div>
+</div>
+
+<div class="fb-badge" id="fbBadge"><div class="fb-dot"></div><span>Conectando...</span></div>
 
 <div class="hdr">
   <div class="status-dot"></div>
@@ -162,7 +168,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
   <div class="badge">EM SESSÃO</div>
   <div class="hdr-right">
     <div class="hdr-player" id="hdrPlayer">Selecione sua delegação</div>
-    <button onclick="clearApiKey()" style="background:transparent;border:1px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);font-size:9px;padding:3px 8px;border-radius:3px;cursor:pointer;font-family:inherit">🔑 Chave</button>
+    <button class="hdr-btn" onclick="document.getElementById('modalApi').classList.remove('hidden')">🔑 API</button>
   </div>
 </div>
 
@@ -171,7 +177,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
     <div class="ptitle">🌎 Delegações</div>
     <div class="dlist" id="delegateList"></div>
   </div>
-
   <div class="center">
     <div class="tabs">
       <button class="tab active" onclick="switchTab('chat')">💬 Debate</button>
@@ -180,11 +185,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
       <button class="tab" onclick="switchTab('newspaper')">📰 Jornal</button>
       <button class="tab" onclick="switchTab('map')">🗺️ Mapa</button>
     </div>
-
     <div class="tabpanel active" id="tab-chat">
       <div class="chatlog" id="chatLog">
-        <div class="msg system"><div class="mtext">🌎 <strong>A Assembleia Geral da OEA está aberta.</strong> Tema: <em>"A situação da América Latina diante do descaso com os direitos humanos"</em>. Selecione sua delegação no painel esquerdo e inicie o debate.</div></div>
-        <div class="msg system"><div class="mtext">📌 Escolha seu país. Na aba <strong>📜 Resolução</strong> redija documentos oficiais. Na aba <strong>🗳️ Votação</strong> a IA simula a votação dos 35 membros. Na aba <strong>📰 Jornal</strong> gere edições de imprensa.</div></div>
+        <div class="msg system"><div class="mtext">🌎 <strong>Assembleia Geral da OEA aberta.</strong> Tema: <em>"A situação da América Latina diante do descaso com os direitos humanos"</em>. Selecione sua delegação à esquerda.</div></div>
       </div>
       <div class="typing" id="typing">Delegado redigindo pronunciamento...</div>
       <div class="inputrow">
@@ -192,84 +195,76 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
         <button class="sendbtn" id="sbtn" onclick="send()">ENVIAR</button>
       </div>
     </div>
-
     <div class="tabpanel" id="tab-resolution">
       <div class="resform">
-        <div class="msg system" style="display:block"><div class="mtext">📜 Redija uma resolução oficial. A IA irá formatá-la no estilo diplomático da OEA e permitirá simular a votação dos 35 países.</div></div>
-        <div class="dfield"><label>Tipo de Documento</label>
+        <div class="msg system" style="display:block"><div class="mtext">📜 Redija uma resolução oficial no estilo diplomático da OEA.</div></div>
+        <div class="dfield"><label>Tipo</label>
           <select id="resType"><option value="resolucao">Resolução</option><option value="declaracao">Declaração</option><option value="recomendacao">Recomendação</option><option value="nota">Nota de Repúdio</option></select>
         </div>
-        <div class="dfield"><label>Título / Assunto</label><input type="text" id="resTitle" placeholder="Ex: Situação dos direitos humanos na Venezuela"/></div>
-        <div class="dfield"><label>Considerandos (Contexto)</label><textarea id="resContext" placeholder="Descreva o contexto e os motivos que justificam o documento..."></textarea></div>
-        <div class="dfield"><label>Dispositivos (O que propõe)</label><textarea id="resContent" placeholder="Descreva as medidas, condenações ou recomendações propostas..."></textarea></div>
-        <button class="resbtn" id="resBtn" onclick="sendResolution()">📜 GERAR E PUBLICAR RESOLUÇÃO</button>
+        <div class="dfield"><label>Título</label><input type="text" id="resTitle" placeholder="Ex: Situação dos direitos humanos na Venezuela"/></div>
+        <div class="dfield"><label>Considerandos</label><textarea id="resContext" placeholder="Contexto e motivos..."></textarea></div>
+        <div class="dfield"><label>Dispositivos</label><textarea id="resContent" placeholder="Medidas e recomendações propostas..."></textarea></div>
+        <button class="resbtn" id="resBtn" onclick="sendResolution()">📜 GERAR E PUBLICAR</button>
         <button class="resbtn sec" onclick="clearResForm()">✕ Limpar</button>
       </div>
     </div>
-
     <div class="tabpanel" id="tab-vote">
       <div class="votelog" id="voteLog">
-        <div class="msg system"><div class="mtext">🗳️ <strong>Painel de Votação.</strong> Após publicar uma resolução, clique em <strong>"Simular Votação"</strong> para que a IA vote como cada país com base em suas posições reais sobre direitos humanos.</div></div>
+        <div class="msg system"><div class="mtext">🗳️ Após publicar uma resolução, clique em <strong>"Simular Votação"</strong>.</div></div>
       </div>
     </div>
-
     <div class="tabpanel" id="tab-newspaper">
       <div class="np-wrap">
         <div class="np-controls">
           <div class="np-side-btns">
-            <button class="np-btn active" id="btnIntl" onclick="selectNP('intl')">🌐 Reuters / AP</button>
+            <button class="np-btn active" id="btnIntl" onclick="selectNP('intl')">🌐 Reuters/AP</button>
             <button class="np-btn" id="btnRegional" onclick="selectNP('regional')">🌎 Agência Latino</button>
             <button class="np-btn" id="btnOea" onclick="selectNP('oea')">🏛️ Boletim OEA</button>
           </div>
           <button class="np-gen-btn" id="npGenBtn" onclick="generateNewspaper()">⚡ GERAR EDIÇÃO</button>
         </div>
         <div class="np-scroll" id="newspaperScroll">
-          <div class="np-placeholder">
-            <div style="font-size:28px;margin-bottom:10px">📰</div>
-            <div style="font-size:11px;color:var(--muted)">SELECIONE O VEÍCULO E CLIQUE EM GERAR</div>
-          </div>
+          <div class="np-placeholder"><div style="font-size:28px">📰</div><div style="font-size:11px">Selecione o veículo e clique em Gerar</div></div>
         </div>
       </div>
     </div>
-
     <div class="tabpanel" id="tab-map">
       <div class="map-wrap">
         <div class="map-legend">
-          <span class="leg-item"><span class="leg-dot" style="background:#b02020"></span>Crise Grave</span>
+          <span class="leg-item"><span class="leg-dot" style="background:#b02020"></span>Crise</span>
           <span class="leg-item"><span class="leg-dot" style="background:#e8b020"></span>Monitorado</span>
           <span class="leg-item"><span class="leg-dot" style="background:#2a8a4a"></span>Estável</span>
           <span class="leg-item"><span class="leg-dot" style="background:#2a5298"></span>Referência</span>
-          <span style="margin-left:auto;font-size:9px;color:var(--muted);font-style:italic">Clique no país para debater</span>
+          <span style="margin-left:auto;font-size:9px;color:var(--muted);font-style:italic">Clique para debater</span>
         </div>
         <div class="map-container">
           <svg viewBox="0 0 500 700" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
-            <g class="country" data-name="EUA" data-info="Principal financiador da OEA, promotor da democracia regional"><ellipse cx="155" cy="55" rx="90" ry="35" fill="#2a8a4a" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="155" y="53" text-anchor="middle" font-size="9" fill="#fff" font-weight="bold">Estados Unidos</text><text x="155" y="65" text-anchor="middle" font-size="7" fill="#fff">🇺🇸</text></g>
-            <g class="country" data-name="México" data-info="Violência, desaparecimentos forçados e criminalização de jornalistas"><ellipse cx="120" cy="110" rx="70" ry="45" fill="#e8b020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="120" y="108" text-anchor="middle" font-size="9" fill="#fff" font-weight="bold">México</text><text x="120" y="120" text-anchor="middle" font-size="7" fill="#fff">🇲🇽</text></g>
-            <g class="country" data-name="Guatemala" data-info="Violência, corrupção e perseguição de defensores de DH"><ellipse cx="115" cy="175" rx="26" ry="16" fill="#b02020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="115" y="175" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">Guatemala 🇬🇹</text></g>
-            <g class="country" data-name="Honduras" data-info="Alta violência, impunidade e assassinatos de líderes sociais"><ellipse cx="148" cy="185" rx="24" ry="12" fill="#b02020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="148" y="187" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">Honduras 🇭🇳</text></g>
-            <g class="country" data-name="Nicarágua" data-info="Regime autoritário, repressão política e prisão de opositores"><ellipse cx="148" cy="205" rx="24" ry="12" fill="#b02020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="148" y="207" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">Nicarágua 🇳🇮</text></g>
-            <g class="country" data-name="Costa Rica" data-info="Referência democrática regional, forte proteção de DH"><ellipse cx="148" cy="223" rx="22" ry="11" fill="#2a8a4a" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="148" y="225" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">Costa Rica 🇨🇷</text></g>
-            <g class="country" data-name="Panamá" data-info="Democracia consolidada, desafios de migração e corrupção"><ellipse cx="165" cy="240" rx="25" ry="11" fill="#2a8a4a" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="165" y="242" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">Panamá 🇵🇦</text></g>
-            <g class="country" data-name="Cuba" data-info="Regime autoritário, repressão de protestos e bloqueio econômico"><ellipse cx="210" cy="155" rx="38" ry="15" fill="#b02020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="210" y="153" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">Cuba</text><text x="210" y="163" text-anchor="middle" font-size="7" fill="#fff">🇨🇺</text></g>
-            <g class="country" data-name="Haiti" data-info="Colapso institucional, violência de gangues, crise humanitária grave"><ellipse cx="248" cy="173" rx="20" ry="12" fill="#b02020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="248" y="175" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">Haiti 🇭🇹</text></g>
-            <g class="country" data-name="Rep. Dominicana" data-info="Apatridia de haitianos, tratamento de migrantes"><ellipse cx="276" cy="173" rx="22" ry="12" fill="#e8b020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="276" y="175" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">Rep. Dom. 🇩🇴</text></g>
-            <g class="country" data-name="Colômbia" data-info="Pós-conflito, assassinatos de líderes sociais, implementação da paz"><ellipse cx="185" cy="285" rx="50" ry="42" fill="#e8b020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="185" y="283" text-anchor="middle" font-size="9" fill="#fff" font-weight="bold">Colômbia</text><text x="185" y="295" text-anchor="middle" font-size="7" fill="#fff">🇨🇴</text></g>
-            <g class="country" data-name="Venezuela" data-info="Crise humanitária grave, repressão política e êxodo em massa"><ellipse cx="255" cy="268" rx="52" ry="34" fill="#b02020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="255" y="266" text-anchor="middle" font-size="9" fill="#fff" font-weight="bold">Venezuela</text><text x="255" y="278" text-anchor="middle" font-size="7" fill="#fff">🇻🇪</text></g>
-            <g class="country" data-name="Equador" data-info="Crise de segurança, violência de cartéis, conflito interno"><ellipse cx="175" cy="340" rx="36" ry="27" fill="#b02020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="175" y="338" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">Equador</text><text x="175" y="350" text-anchor="middle" font-size="7" fill="#fff">🇪🇨</text></g>
-            <g class="country" data-name="Peru" data-info="Instabilidade política, protestos e mortes em manifestações"><ellipse cx="210" cy="400" rx="48" ry="50" fill="#e8b020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="210" y="398" text-anchor="middle" font-size="9" fill="#fff" font-weight="bold">Peru</text><text x="210" y="410" text-anchor="middle" font-size="7" fill="#fff">🇵🇪</text></g>
-            <g class="country" data-name="Bolívia" data-info="Tensões políticas, direitos indígenas e recursos naturais"><ellipse cx="268" cy="408" rx="40" ry="38" fill="#e8b020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="268" y="406" text-anchor="middle" font-size="9" fill="#fff" font-weight="bold">Bolívia</text><text x="268" y="418" text-anchor="middle" font-size="7" fill="#fff">🇧🇴</text></g>
-            <g class="country" data-name="Brasil" data-info="Desigualdade, violência policial, povos indígenas e questões ambientais"><ellipse cx="340" cy="378" rx="85" ry="78" fill="#e8b020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="340" y="376" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">Brasil</text><text x="340" y="390" text-anchor="middle" font-size="8" fill="#fff">🇧🇷</text></g>
-            <g class="country" data-name="Chile" data-info="Progresso em DH, processo constitucional e memória histórica"><ellipse cx="220" cy="508" rx="20" ry="56" fill="#2a8a4a" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="220" y="506" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">Chile</text><text x="220" y="518" text-anchor="middle" font-size="7" fill="#fff">🇨🇱</text></g>
-            <g class="country" data-name="Argentina" data-info="Referência em DH pós-ditadura, memória, verdade e justiça"><ellipse cx="278" cy="518" rx="48" ry="66" fill="#2a5298" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="278" y="516" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">Argentina</text><text x="278" y="528" text-anchor="middle" font-size="7" fill="#fff">🇦🇷</text></g>
-            <g class="country" data-name="Paraguai" data-info="Corrupção, pobreza rural e desigualdade"><ellipse cx="308" cy="458" rx="30" ry="25" fill="#e8b020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="308" y="458" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">Paraguai 🇵🇾</text></g>
-            <g class="country" data-name="Uruguai" data-info="Melhor índice de DH da região, democracia consolidada"><ellipse cx="328" cy="508" rx="27" ry="22" fill="#2a5298" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="328" y="508" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">Uruguai 🇺🇾</text></g>
+            <g class="country" data-name="EUA" data-info="Principal financiador da OEA"><ellipse cx="155" cy="55" rx="90" ry="35" fill="#2a8a4a" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="155" y="53" text-anchor="middle" font-size="9" fill="#fff" font-weight="bold">Estados Unidos</text><text x="155" y="65" text-anchor="middle" font-size="7" fill="#fff">🇺🇸</text></g>
+            <g class="country" data-name="México" data-info="Violência e desaparecimentos forçados"><ellipse cx="120" cy="110" rx="70" ry="45" fill="#e8b020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="120" y="108" text-anchor="middle" font-size="9" fill="#fff" font-weight="bold">México</text><text x="120" y="120" text-anchor="middle" font-size="7" fill="#fff">🇲🇽</text></g>
+            <g class="country" data-name="Guatemala" data-info="Violência e perseguição de defensores de DH"><ellipse cx="115" cy="175" rx="26" ry="16" fill="#b02020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="115" y="175" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">Guatemala 🇬🇹</text></g>
+            <g class="country" data-name="Honduras" data-info="Alta violência e impunidade"><ellipse cx="148" cy="185" rx="24" ry="12" fill="#b02020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="148" y="187" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">Honduras 🇭🇳</text></g>
+            <g class="country" data-name="Nicarágua" data-info="Regime autoritário e repressão política"><ellipse cx="148" cy="205" rx="24" ry="12" fill="#b02020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="148" y="207" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">Nicarágua 🇳🇮</text></g>
+            <g class="country" data-name="Costa Rica" data-info="Referência democrática regional"><ellipse cx="148" cy="223" rx="22" ry="11" fill="#2a8a4a" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="148" y="225" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">Costa Rica 🇨🇷</text></g>
+            <g class="country" data-name="Panamá" data-info="Democracia consolidada"><ellipse cx="165" cy="240" rx="25" ry="11" fill="#2a8a4a" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="165" y="242" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">Panamá 🇵🇦</text></g>
+            <g class="country" data-name="Cuba" data-info="Regime autoritário e bloqueio econômico"><ellipse cx="210" cy="155" rx="38" ry="15" fill="#b02020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="210" y="153" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">Cuba</text><text x="210" y="163" text-anchor="middle" font-size="7" fill="#fff">🇨🇺</text></g>
+            <g class="country" data-name="Haiti" data-info="Colapso institucional e crise humanitária"><ellipse cx="248" cy="173" rx="20" ry="12" fill="#b02020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="248" y="175" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">Haiti 🇭🇹</text></g>
+            <g class="country" data-name="Rep. Dominicana" data-info="Apatridia e migrantes"><ellipse cx="276" cy="173" rx="22" ry="12" fill="#e8b020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="276" y="175" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">Rep. Dom. 🇩🇴</text></g>
+            <g class="country" data-name="Colômbia" data-info="Pós-conflito e assassinatos de líderes"><ellipse cx="185" cy="285" rx="50" ry="42" fill="#e8b020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="185" y="283" text-anchor="middle" font-size="9" fill="#fff" font-weight="bold">Colômbia</text><text x="185" y="295" text-anchor="middle" font-size="7" fill="#fff">🇨🇴</text></g>
+            <g class="country" data-name="Venezuela" data-info="Crise humanitária e repressão política"><ellipse cx="255" cy="268" rx="52" ry="34" fill="#b02020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="255" y="266" text-anchor="middle" font-size="9" fill="#fff" font-weight="bold">Venezuela</text><text x="255" y="278" text-anchor="middle" font-size="7" fill="#fff">🇻🇪</text></g>
+            <g class="country" data-name="Equador" data-info="Crise de segurança e cartéis"><ellipse cx="175" cy="340" rx="36" ry="27" fill="#b02020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="175" y="338" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">Equador</text><text x="175" y="350" text-anchor="middle" font-size="7" fill="#fff">🇪🇨</text></g>
+            <g class="country" data-name="Peru" data-info="Instabilidade política e protestos"><ellipse cx="210" cy="400" rx="48" ry="50" fill="#e8b020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="210" y="398" text-anchor="middle" font-size="9" fill="#fff" font-weight="bold">Peru</text><text x="210" y="410" text-anchor="middle" font-size="7" fill="#fff">🇵🇪</text></g>
+            <g class="country" data-name="Bolívia" data-info="Tensões políticas e direitos indígenas"><ellipse cx="268" cy="408" rx="40" ry="38" fill="#e8b020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="268" y="406" text-anchor="middle" font-size="9" fill="#fff" font-weight="bold">Bolívia</text><text x="268" y="418" text-anchor="middle" font-size="7" fill="#fff">🇧🇴</text></g>
+            <g class="country" data-name="Brasil" data-info="Desigualdade e violência policial"><ellipse cx="340" cy="378" rx="85" ry="78" fill="#e8b020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="340" y="376" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">Brasil</text><text x="340" y="390" text-anchor="middle" font-size="8" fill="#fff">🇧🇷</text></g>
+            <g class="country" data-name="Chile" data-info="Progresso em DH e memória histórica"><ellipse cx="220" cy="508" rx="20" ry="56" fill="#2a8a4a" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="220" y="506" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">Chile</text><text x="220" y="518" text-anchor="middle" font-size="7" fill="#fff">🇨🇱</text></g>
+            <g class="country" data-name="Argentina" data-info="Referência em DH pós-ditadura"><ellipse cx="278" cy="518" rx="48" ry="66" fill="#2a5298" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="278" y="516" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">Argentina</text><text x="278" y="528" text-anchor="middle" font-size="7" fill="#fff">🇦🇷</text></g>
+            <g class="country" data-name="Paraguai" data-info="Corrupção e pobreza rural"><ellipse cx="308" cy="458" rx="30" ry="25" fill="#e8b020" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="308" y="458" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">Paraguai 🇵🇾</text></g>
+            <g class="country" data-name="Uruguai" data-info="Melhor índice de DH da região"><ellipse cx="328" cy="508" rx="27" ry="22" fill="#2a5298" stroke="#fff" stroke-width="1.5" opacity="0.85"/><text x="328" y="508" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">Uruguai 🇺🇾</text></g>
           </svg>
           <div class="map-tooltip hidden" id="mapTooltip"></div>
         </div>
       </div>
     </div>
   </div>
-
   <div class="intel">
     <div class="ptitle">📋 Pauta</div>
     <div class="intel-inner">
@@ -277,13 +272,13 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
         <div class="irow"><span>Comitê</span><span class="ival b">Assembleia Geral</span></div>
         <div class="irow"><span>Membros</span><span class="ival">35 países</span></div>
         <div class="irow"><span>Status</span><span class="ival g">Em Sessão</span></div>
+        <div class="irow"><span>Aluno</span><span class="ival b" id="sideStudentName">—</span></div>
       </div>
       <div class="icard"><h3>Situação Regional</h3>
         <div class="irow"><span>Venezuela</span><span class="ival r">Crise grave</span></div>
         <div class="irow"><span>Haiti</span><span class="ival r">Emergência</span></div>
         <div class="irow"><span>Nicarágua</span><span class="ival r">Repressão</span></div>
         <div class="irow"><span>Cuba</span><span class="ival a">Monitorado</span></div>
-        <div class="irow"><span>El Salvador</span><span class="ival a">Estado exc.</span></div>
         <div class="irow"><span>Chile</span><span class="ival g">Progresso</span></div>
         <div class="irow"><span>Uruguai</span><span class="ival g">Referência</span></div>
       </div>
@@ -293,93 +288,100 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
         <button class="actbtn" onclick="quick('Como fortalecer a CIDH diante da resistência de Estados membros?')">🤝 Fortalecer CIDH</button>
         <button class="actbtn" onclick="quick('A soberania nacional deve limitar a atuação da OEA em DH?')">⚖️ Soberania vs DH</button>
         <button class="actbtn" onclick="quick('Qual a solução para a crise humanitária no Haiti?')">🆘 Crise no Haiti</button>
-        <button class="actbtn" onclick="quick('O princípio da não intervenção deve prevalecer sobre a proteção de DH?')">🌐 Não intervenção</button>
       </div>
     </div>
   </div>
 </div>
 
-<script>
-// ── API KEY ───────────────────────────────────────────
-let API_KEY = localStorage.getItem('oea_api_key') || '';
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, doc, setDoc, serverTimestamp, collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+const fb = initializeApp({apiKey:"AIzaSyDAebTSplrmE5n9evLmRvJFzgI3pxBW_sQ",authDomain:"oea-model-un.firebaseapp.com",projectId:"oea-model-un",storageBucket:"oea-model-un.firebasestorage.app",messagingSenderId:"791765339095",appId:"1:791765339095:web:acbf883113aa8ce2f49992"});
+const db = getFirestore(fb);
+window._db = db;
+window._fbFns = { doc, setDoc, serverTimestamp, collection, addDoc };
+window._fbReady = true;
+document.getElementById('fbBadge').innerHTML = '<div class="fb-dot"></div><span>Monitorado pelo professor</span>';
+</script>
 
-function checkApiKey() {
-  if (!API_KEY) {
-    document.getElementById('modalOverlay').classList.remove('hidden');
-  } else {
-    document.getElementById('modalOverlay').classList.add('hidden');
-  }
+<script>
+let API_KEY = localStorage.getItem('oea_api_key') || '';
+let studentName = '', studentCode = 'turma-geral';
+let cur = 'brasil', hist = [], currentNP = 'intl', votes = [];
+
+function saveStudentName() {
+  const n = document.getElementById('studentNameInput').value.trim();
+  const c = document.getElementById('studentCodeInput').value.trim();
+  if (!n) { alert('Digite seu nome.'); return; }
+  studentName = n; studentCode = c || 'turma-geral';
+  localStorage.setItem('oea_student_name', n);
+  localStorage.setItem('oea_student_code', studentCode);
+  document.getElementById('modalName').classList.add('hidden');
+  document.getElementById('sideStudentName').textContent = n;
+  if (!API_KEY) document.getElementById('modalApi').classList.remove('hidden');
+  fbLog('entrou', { nome: n });
 }
 
 function saveApiKey() {
-  const key = document.getElementById('apiKeyInput').value.trim();
-  if (!key.startsWith('sk-ant-')) {
-    alert('Chave inválida. Deve começar com sk-ant-');
-    return;
+  const k = document.getElementById('apiKeyInput').value.trim();
+  if (!k.startsWith('sk-ant-')) { alert('Chave inválida.'); return; }
+  API_KEY = k; localStorage.setItem('oea_api_key', k);
+  document.getElementById('modalApi').classList.add('hidden');
+}
+
+function checkInit() {
+  const n = localStorage.getItem('oea_student_name');
+  if (n) {
+    studentName = n; studentCode = localStorage.getItem('oea_student_code') || 'turma-geral';
+    document.getElementById('modalName').classList.add('hidden');
+    document.getElementById('sideStudentName').textContent = n;
+    if (!API_KEY) document.getElementById('modalApi').classList.remove('hidden');
   }
-  API_KEY = key;
-  localStorage.setItem('oea_api_key', key);
-  document.getElementById('modalOverlay').classList.add('hidden');
 }
 
-function clearApiKey() {
-  localStorage.removeItem('oea_api_key');
-  API_KEY = '';
-  document.getElementById('apiKeyInput').value = '';
-  document.getElementById('modalOverlay').classList.remove('hidden');
+async function fbLog(tipo, dados) {
+  if (!window._fbReady || !studentName) return;
+  try {
+    const { doc, setDoc, serverTimestamp, collection, addDoc } = window._fbFns;
+    const db = window._db;
+    await addDoc(collection(db, 'sessoes', studentCode, 'atividades'), { tipo, aluno: studentName, turma: studentCode, pais: cur, timestamp: serverTimestamp(), ...dados });
+    await setDoc(doc(db, 'sessoes', studentCode, 'alunos', studentName.replace(/\s+/g,'_')), { nome: studentName, pais_atual: cur, ultima_atividade: tipo, timestamp: serverTimestamp() }, { merge: true });
+  } catch(e) { console.warn('FB:', e.message); }
 }
 
-// ── API CALL ──────────────────────────────────────────
-async function callClaude(system, messages, max_tokens) {
-  const r = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'anthropic-version': '2023-06-01',
-      'x-api-key': API_KEY,
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: max_tokens || 800,
-      system,
-      messages
-    })
-  });
-  if (!r.ok) { const e = await r.text(); throw new Error('API ' + r.status + ': ' + e.substring(0, 100)); }
+async function callClaude(sys, msgs, max) {
+  const r = await fetch('https://api.anthropic.com/v1/messages', { method:'POST', headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','x-api-key':API_KEY,'anthropic-dangerous-direct-browser-access':'true'}, body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:max||800,system:sys,messages:msgs}) });
+  if (!r.ok) { const e = await r.text(); throw new Error('API '+r.status+': '+e.substring(0,80)); }
   const d = await r.json();
-  return d.content?.map(c => c.text || '').join('') || '';
+  return d.content?.map(c=>c.text||'').join('')||'';
 }
 
-// ── DELEGATES ─────────────────────────────────────────
 const DELEGATES = [
-  {id:'usa',name:'Estados Unidos',flag:'🇺🇸',region:'América do Norte',persona:'Você representa os Estados Unidos na OEA. Defenda democracia e DH nas Américas, critique regimes autoritários como Venezuela e Nicarágua. Seja firme e diplomático.'},
-  {id:'canada',name:'Canadá',flag:'🇨🇦',region:'América do Norte',persona:'Você representa o Canadá na OEA. Forte defensor multilateral de DH, apoiador da CIDH, busca soluções consensuais.'},
-  {id:'mexico',name:'México',flag:'🇲🇽',region:'América do Norte',persona:'Você representa o México na OEA. Equilibre não intervenção com engajamento em DH. Reconheça desafios internos.'},
-  {id:'guatemala',name:'Guatemala',flag:'🇬🇹',region:'América Central',persona:'Você representa a Guatemala na OEA. Reconheça desafios de violência e discriminação indígena, defenda esforços nacionais.'},
+  {id:'usa',name:'Estados Unidos',flag:'🇺🇸',region:'América do Norte',persona:'Você representa os Estados Unidos na OEA. Defenda democracia e DH nas Américas, critique Venezuela e Nicarágua.'},
+  {id:'canada',name:'Canadá',flag:'🇨🇦',region:'América do Norte',persona:'Você representa o Canadá na OEA. Forte defensor multilateral de DH, apoiador da CIDH.'},
+  {id:'mexico',name:'México',flag:'🇲🇽',region:'América do Norte',persona:'Você representa o México na OEA. Equilibre não intervenção com engajamento em DH.'},
+  {id:'guatemala',name:'Guatemala',flag:'🇬🇹',region:'América Central',persona:'Você representa a Guatemala na OEA. Reconheça desafios de violência e discriminação indígena.'},
   {id:'honduras',name:'Honduras',flag:'🇭🇳',region:'América Central',persona:'Você representa Honduras na OEA. Aborde violência, impunidade e criminalização de defensores de DH.'},
-  {id:'elsalvador',name:'El Salvador',flag:'🇸🇻',region:'América Central',persona:'Você representa El Salvador na OEA. Defenda as políticas de segurança de Bukele, responda às críticas sobre restrição de liberdades.'},
-  {id:'nicaragua',name:'Nicarágua',flag:'🇳🇮',region:'América Central',persona:'Você representa a Nicarágua na OEA. Rejeite interferência externa, defenda soberania nacional.'},
-  {id:'costarica',name:'Costa Rica',flag:'🇨🇷',region:'América Central',persona:'Você representa a Costa Rica na OEA. Referência regional em democracia e DH, forte apoiador da CIDH.'},
-  {id:'panama',name:'Panamá',flag:'🇵🇦',region:'América Central',persona:'Você representa o Panamá na OEA. Posição moderada, apoio a mecanismos de DH equilibrado com soberania.'},
-  {id:'cuba',name:'Cuba',flag:'🇨🇺',region:'Caribe',persona:'Você representa Cuba na OEA. Questione o imperialismo, defenda soberania e modelo socialista, critique o bloqueio econômico como violação de DH.'},
-  {id:'haiti',name:'Haiti',flag:'🇭🇹',region:'Caribe',persona:'Você representa o Haiti na OEA. Apresente a gravíssima crise humanitária, solicite apoio internacional urgente e medidas concretas da OEA.'},
-  {id:'domrep',name:'Rep. Dominicana',flag:'🇩🇴',region:'Caribe',persona:'Você representa a República Dominicana na OEA. Aborde tratamento de migrantes haitianos e questões de apatridia.'},
-  {id:'jamaica',name:'Jamaica',flag:'🇯🇲',region:'Caribe',persona:'Você representa a Jamaica na OEA. Perspectiva caribenha sobre violência, direitos e desenvolvimento.'},
-  {id:'trinidad',name:'Trinidad e Tobago',flag:'🇹🇹',region:'Caribe',persona:'Você representa Trinidad e Tobago na OEA. Posição equilibrada sobre DH, foco em desenvolvimento e segurança.'},
-  {id:'brasil',name:'Brasil',flag:'🇧🇷',region:'América do Sul',persona:'Você representa o Brasil na OEA. Equilibre soberania e não intervenção com responsabilidades em DH. Aborde desigualdade, violência policial e povos indígenas.'},
-  {id:'argentina',name:'Argentina',flag:'🇦🇷',region:'América do Sul',persona:'Você representa a Argentina na OEA. Forte tradição em DH pós-ditadura, apoiadora da CIDH, memória e justiça.'},
-  {id:'venezuela',name:'Venezuela',flag:'🇻🇪',region:'América do Sul',persona:'Você representa a Venezuela na OEA. Rejeite interferência imperial, denuncie sanções como violação de DH, defenda a Revolução Bolivariana.'},
-  {id:'colombia',name:'Colômbia',flag:'🇨🇴',region:'América do Sul',persona:'Você representa a Colômbia na OEA. Apresente o processo de paz, pós-conflito, assassinatos de líderes sociais.'},
-  {id:'peru',name:'Peru',flag:'🇵🇪',region:'América do Sul',persona:'Você representa o Peru na OEA. Aborde instabilidade política, protestos e mortes em manifestações.'},
-  {id:'chile',name:'Chile',flag:'🇨🇱',region:'América do Sul',persona:'Você representa o Chile na OEA. Processo de reforma constitucional, memória da ditadura, compromisso com DH.'},
-  {id:'bolivia',name:'Bolívia',flag:'🇧🇴',region:'América do Sul',persona:'Você representa a Bolívia na OEA. Direitos dos povos indígenas, soberania sobre recursos naturais.'},
-  {id:'ecuador',name:'Equador',flag:'🇪🇨',region:'América do Sul',persona:'Você representa o Equador na OEA. Crise de segurança, violência de cartéis e DH em conflito interno.'},
-  {id:'paraguay',name:'Paraguai',flag:'🇵🇾',region:'América do Sul',persona:'Você representa o Paraguai na OEA. Posição conservadora, desafios de corrupção e pobreza rural.'},
-  {id:'uruguay',name:'Uruguai',flag:'🇺🇾',region:'América do Sul',persona:'Você representa o Uruguai na OEA. Referência regional em democracia e DH, forte apoio à CIDH.'}
+  {id:'elsalvador',name:'El Salvador',flag:'🇸🇻',region:'América Central',persona:'Você representa El Salvador na OEA. Defenda as políticas de segurança, responda às críticas.'},
+  {id:'nicaragua',name:'Nicarágua',flag:'🇳🇮',region:'América Central',persona:'Você representa a Nicarágua na OEA. Rejeite interferência externa, defenda soberania.'},
+  {id:'costarica',name:'Costa Rica',flag:'🇨🇷',region:'América Central',persona:'Você representa a Costa Rica na OEA. Referência regional em democracia e DH.'},
+  {id:'panama',name:'Panamá',flag:'🇵🇦',region:'América Central',persona:'Você representa o Panamá na OEA. Posição moderada sobre DH e soberania.'},
+  {id:'cuba',name:'Cuba',flag:'🇨🇺',region:'Caribe',persona:'Você representa Cuba na OEA. Questione o imperialismo, defenda soberania, critique o bloqueio.'},
+  {id:'haiti',name:'Haiti',flag:'🇭🇹',region:'Caribe',persona:'Você representa o Haiti na OEA. Apresente a crise humanitária, solicite apoio urgente.'},
+  {id:'domrep',name:'Rep. Dominicana',flag:'🇩🇴',region:'Caribe',persona:'Você representa a Rep. Dominicana na OEA. Aborde tratamento de migrantes haitianos.'},
+  {id:'jamaica',name:'Jamaica',flag:'🇯🇲',region:'Caribe',persona:'Você representa a Jamaica na OEA. Perspectiva caribenha sobre violência e desenvolvimento.'},
+  {id:'trinidad',name:'Trinidad e Tobago',flag:'🇹🇹',region:'Caribe',persona:'Você representa Trinidad e Tobago na OEA. Posição equilibrada sobre DH e segurança.'},
+  {id:'brasil',name:'Brasil',flag:'🇧🇷',region:'América do Sul',persona:'Você representa o Brasil na OEA. Equilibre soberania com DH. Aborde desigualdade e violência policial.'},
+  {id:'argentina',name:'Argentina',flag:'🇦🇷',region:'América do Sul',persona:'Você representa a Argentina na OEA. Forte tradição em DH pós-ditadura, apoiadora da CIDH.'},
+  {id:'venezuela',name:'Venezuela',flag:'🇻🇪',region:'América do Sul',persona:'Você representa a Venezuela na OEA. Rejeite interferência imperial, denuncie sanções.'},
+  {id:'colombia',name:'Colômbia',flag:'🇨🇴',region:'América do Sul',persona:'Você representa a Colômbia na OEA. Apresente o processo de paz e pós-conflito.'},
+  {id:'peru',name:'Peru',flag:'🇵🇪',region:'América do Sul',persona:'Você representa o Peru na OEA. Aborde instabilidade política e mortes em manifestações.'},
+  {id:'chile',name:'Chile',flag:'🇨🇱',region:'América do Sul',persona:'Você representa o Chile na OEA. Reforma constitucional, memória da ditadura.'},
+  {id:'bolivia',name:'Bolívia',flag:'🇧🇴',region:'América do Sul',persona:'Você representa a Bolívia na OEA. Direitos dos povos indígenas e soberania.'},
+  {id:'ecuador',name:'Equador',flag:'🇪🇨',region:'América do Sul',persona:'Você representa o Equador na OEA. Crise de segurança e violência de cartéis.'},
+  {id:'paraguay',name:'Paraguai',flag:'🇵🇾',region:'América do Sul',persona:'Você representa o Paraguai na OEA. Posição conservadora, desafios de corrupção.'},
+  {id:'uruguay',name:'Uruguai',flag:'🇺🇾',region:'América do Sul',persona:'Você representa o Uruguai na OEA. Referência regional em democracia e DH.'}
 ];
-
-let cur = 'brasil', hist = [], currentNP = 'intl', votes = [];
 
 function renderDelegates() {
   const list = document.getElementById('delegateList'); list.innerHTML = '';
@@ -394,7 +396,8 @@ function renderDelegates() {
         document.querySelectorAll('.dbtn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active'); cur = d.id; hist = [];
         document.getElementById('hdrPlayer').textContent = d.flag + ' ' + d.name;
-        addMsg('system', '', '', '🌎 Você agora representa <strong>' + d.name + '</strong>. Histórico reiniciado.');
+        addMsg('system','','','🌎 Você agora representa <strong>' + d.name + '</strong>.');
+        fbLog('escolheu_pais', { pais_escolhido: d.name });
       });
       list.appendChild(btn);
     });
@@ -404,9 +407,9 @@ function renderDelegates() {
 function addMsg(role, flag, name, text) {
   const log = document.getElementById('chatLog');
   const d = document.createElement('div');
-  if (role === 'system') { d.className = 'msg system'; d.innerHTML = '<div class="mtext">' + text + '</div>'; }
-  else if (role === 'user') { d.className = 'msg user'; d.innerHTML = '<div class="mhdr">📨 Você · ' + name + '</div><div class="mtext">' + text + '</div>'; }
-  else { d.className = 'msg ai'; d.innerHTML = '<div class="mhdr"><span>' + flag + '</span> Delegação de ' + name + '</div><div class="mtext">' + text + '</div>'; }
+  if (role==='system') { d.className='msg system'; d.innerHTML='<div class="mtext">'+text+'</div>'; }
+  else if (role==='user') { d.className='msg user'; d.innerHTML='<div class="mhdr">📨 '+studentName+' · '+name+'</div><div class="mtext">'+text+'</div>'; }
+  else { d.className='msg ai'; d.innerHTML='<div class="mhdr"><span>'+flag+'</span> Delegação de '+name+'</div><div class="mtext">'+text+'</div>'; }
   log.appendChild(d); log.scrollTop = log.scrollHeight;
 }
 
@@ -414,14 +417,16 @@ async function send() {
   const inp = document.getElementById('inp'); const t = inp.value.trim(); if (!t) return;
   const del = DELEGATES.find(d => d.id === cur);
   const btn = document.getElementById('sbtn'); btn.disabled = true; inp.value = '';
-  addMsg('user', del.flag, del.name, t); hist.push({ role: 'user', content: t });
-  const typ = document.getElementById('typing'); typ.textContent = 'Delegação de ' + del.name + ' redigindo pronunciamento...'; typ.classList.add('on');
+  addMsg('user', del.flag, del.name, t); hist.push({role:'user',content:t});
+  fbLog('mensagem', { texto: t, pais: del.name });
+  const typ = document.getElementById('typing'); typ.textContent = 'Delegação de ' + del.name + ' redigindo...'; typ.classList.add('on');
   const sys = del.persona + ' Você é o(a) representante de ' + del.name + ' na 55ª Assembleia Geral da OEA. Tema: "A situação da América Latina diante do descaso com os direitos humanos". Responda em português brasileiro com linguagem diplomática formal, 2-3 parágrafos.';
   try {
     const reply = await callClaude(sys, hist, 900);
-    hist.push({ role: 'assistant', content: reply }); typ.classList.remove('on');
-    addMsg('ai', del.flag, del.name, reply.replace(/\n/g, '<br>'));
-  } catch (e) { typ.classList.remove('on'); addMsg('system', '', '', 'Erro: ' + e.message); }
+    hist.push({role:'assistant',content:reply}); typ.classList.remove('on');
+    addMsg('ai', del.flag, del.name, reply.replace(/\n/g,'<br>'));
+    fbLog('resposta_ia', { pergunta: t, resposta: reply.substring(0,500), pais: del.name });
+  } catch(e) { typ.classList.remove('on'); addMsg('system','','','Erro: '+e.message); }
   btn.disabled = false; inp.focus();
 }
 
@@ -432,68 +437,60 @@ async function sendResolution() {
   const context = document.getElementById('resContext').value.trim();
   const content = document.getElementById('resContent').value.trim();
   const tipo = document.getElementById('resType').value;
-  if (!title || !context || !content) { alert('Preencha todos os campos.'); return; }
+  if (!title||!context||!content) { alert('Preencha todos os campos.'); return; }
   const btn = document.getElementById('resBtn'); btn.disabled = true; btn.textContent = '⏳ GERANDO...';
   const del = DELEGATES.find(d => d.id === cur);
-  const tipoLabel = { resolucao: 'RESOLUÇÃO', declaracao: 'DECLARAÇÃO', recomendacao: 'RECOMENDAÇÃO', nota: 'NOTA DE REPÚDIO' }[tipo];
-  const sys = 'Especialista em direito internacional e diplomacia da OEA. Formate documentos oficiais em português brasileiro com linguagem diplomática formal. Inclua: protocolo fictício, data, considerandos (CONSIDERANDO QUE...), dispositivos (RESOLVE/DECLARA...) e assinatura.';
-  const prompt = 'TIPO: ' + tipoLabel + '\nPROPONENTE: ' + del.name + '\nTÍTULO: ' + title + '\nCONTEXTO: ' + context + '\nDISPOSITIVOS: ' + content;
+  const tipoLabel = {resolucao:'RESOLUÇÃO',declaracao:'DECLARAÇÃO',recomendacao:'RECOMENDAÇÃO',nota:'NOTA DE REPÚDIO'}[tipo];
   try {
-    const text = await callClaude(sys, [{ role: 'user', content: prompt }], 1000);
-    const resObj = { id: 'res_' + Date.now(), tipoLabel, title, text, proposedBy: del.name, flag: del.flag };
+    const text = await callClaude('Especialista em diplomacia da OEA. Formate documentos oficiais em português brasileiro com linguagem formal. Inclua: protocolo fictício, data, considerandos (CONSIDERANDO QUE...), dispositivos (RESOLVE/DECLARA...) e assinatura.',
+      [{role:'user',content:'TIPO: '+tipoLabel+'\nPROPONENTE: '+del.name+'\nTÍTULO: '+title+'\nCONTEXTO: '+context+'\nDISPOSITIVOS: '+content}], 1000);
+    const resObj = {id:'res_'+Date.now(),tipoLabel,title,text,proposedBy:del.name,flag:del.flag};
     votes.push(resObj);
+    fbLog('resolucao', { titulo: title, tipo: tipoLabel, texto: text.substring(0,800), pais: del.name });
     const log = document.getElementById('chatLog');
     const div = document.createElement('div'); div.className = 'msg resolution';
-    div.innerHTML = '<div class="mhdr-res">📜 ' + tipoLabel + ' — ' + title + '</div><div class="mtext" style="font-family:Georgia,serif;font-size:11px;line-height:1.8">' + text.replace(/\n/g, '<br>') + '</div><div style="margin-top:8px;font-size:9px;color:var(--muted)">Proposta por: ' + del.flag + ' ' + del.name + ' · <button onclick="simulateVote(\'' + resObj.id + '\')" style="background:var(--blue2);color:white;border:none;padding:3px 10px;border-radius:3px;cursor:pointer;font-size:9px;font-weight:700">🗳️ SIMULAR VOTAÇÃO</button></div>';
+    div.innerHTML = '<div class="mhdr-res">📜 '+tipoLabel+' — '+title+'</div><div class="mtext" style="font-family:Georgia,serif;font-size:11px;line-height:1.8">'+text.replace(/\n/g,'<br>')+'</div><div style="margin-top:8px;font-size:9px;color:var(--muted)">Proposta por: '+del.flag+' '+del.name+' · <button onclick="simulateVote(\''+resObj.id+'\')" style="background:var(--blue2);color:white;border:none;padding:3px 10px;border-radius:3px;cursor:pointer;font-size:9px;font-weight:700">🗳️ SIMULAR VOTAÇÃO</button></div>';
     log.appendChild(div); log.scrollTop = log.scrollHeight;
     switchTab('chat'); clearResForm();
-  } catch (e) { alert('Erro: ' + e.message); }
-  btn.disabled = false; btn.textContent = '📜 GERAR E PUBLICAR RESOLUÇÃO';
+  } catch(e) { alert('Erro: '+e.message); }
+  btn.disabled = false; btn.textContent = '📜 GERAR E PUBLICAR';
 }
 
-window.clearResForm = function() {
-  document.getElementById('resTitle').value = '';
-  document.getElementById('resContext').value = '';
-  document.getElementById('resContent').value = '';
-};
+window.clearResForm = function() { document.getElementById('resTitle').value=''; document.getElementById('resContext').value=''; document.getElementById('resContent').value=''; };
 
 window.simulateVote = async function(resId) {
   const res = votes.find(v => v.id === resId); if (!res) return;
   switchTab('vote');
   const vlog = document.getElementById('voteLog');
   const loading = document.createElement('div'); loading.className = 'msg system';
-  loading.innerHTML = '<div class="mtext">⏳ Simulando votação de 35 países sobre <em>"' + res.title + '"</em>...</div>';
-  vlog.appendChild(loading); vlog.scrollTop = vlog.scrollHeight;
-  const sys = 'Especialista em política externa latino-americana. Simule como os países da OEA votariam. Retorne SOMENTE JSON sem markdown: {"favor":["País A"],"contra":["País C"],"abstencao":["País D"],"analise":"2 frases"}';
-  const prompt = 'Simule votação OEA:\nTIPO: ' + res.tipoLabel + '\nTÍTULO: ' + res.title + '\nPROPONENTE: ' + res.proposedBy + '\nConsidere as posições reais de cada país sobre direitos humanos.';
+  loading.innerHTML = '<div class="mtext">⏳ Simulando votação sobre <em>"'+res.title+'"</em>...</div>';
+  vlog.appendChild(loading);
   try {
-    const raw = await callClaude(sys, [{ role: 'user', content: prompt }], 700);
-    let result = { favor: [], contra: [], abstencao: [], analise: '' };
-    try { result = JSON.parse(raw.replace(/```json|```/g, '').trim()); } catch (e) {}
+    const raw = await callClaude('Especialista em política externa latino-americana. Simule como os países da OEA votariam. Retorne SOMENTE JSON sem markdown: {"favor":["País A"],"contra":["País C"],"abstencao":["País D"],"analise":"2 frases"}',
+      [{role:'user',content:'Simule votação OEA:\nTIPO: '+res.tipoLabel+'\nTÍTULO: '+res.title+'\nPROPONENTE: '+res.proposedBy}], 700);
+    let result = {favor:[],contra:[],abstencao:[],analise:''};
+    try { result = JSON.parse(raw.replace(/```json|```/g,'').trim()); } catch(e) {}
     loading.remove();
-    const approved = (result.favor?.length || 0) > (result.contra?.length || 0);
+    fbLog('votacao', { titulo: res.title, favor: result.favor?.length||0, contra: result.contra?.length||0, aprovado: (result.favor?.length||0)>(result.contra?.length||0) });
+    const approved = (result.favor?.length||0) > (result.contra?.length||0);
     const div = document.createElement('div'); div.className = 'msg vote-msg';
-    div.innerHTML = '<div class="mhdr-vote">🗳️ RESULTADO — ' + res.tipoLabel + '</div>'
-      + '<div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:7px">' + res.title + '</div>'
-      + '<div style="display:flex;flex-direction:column;gap:5px;font-size:10px">'
-      + '<div><span style="color:var(--green2);font-weight:700">✅ A Favor (' + (result.favor?.length || 0) + '):</span> ' + (result.favor || []).join(', ') + '</div>'
-      + '<div><span style="color:var(--red);font-weight:700">❌ Contra (' + (result.contra?.length || 0) + '):</span> ' + (result.contra || []).join(', ') + '</div>'
-      + '<div><span style="color:var(--muted);font-weight:700">⬜ Abstenção (' + (result.abstencao?.length || 0) + '):</span> ' + (result.abstencao || []).join(', ') + '</div>'
-      + '</div><div style="margin-top:9px;padding:7px;background:var(--surface2);border-radius:3px;font-size:10px;color:var(--muted);line-height:1.6;border-left:3px solid var(--blue3)"><strong style="color:var(--blue2)">📊 Análise:</strong> ' + (result.analise || '') + '</div>'
-      + '<div style="margin-top:7px;font-size:11px;font-weight:700;color:' + (approved ? 'var(--green2)' : 'var(--red)') + '">' + (approved ? '✅ RESOLUÇÃO APROVADA' : '❌ RESOLUÇÃO REJEITADA') + '</div>';
+    div.innerHTML = '<div class="mhdr-vote">🗳️ RESULTADO — '+res.tipoLabel+'</div>'
+      +'<div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:7px">'+res.title+'</div>'
+      +'<div style="display:flex;flex-direction:column;gap:5px;font-size:10px">'
+      +'<div><span style="color:var(--green2);font-weight:700">✅ A Favor ('+(result.favor?.length||0)+'):</span> '+(result.favor||[]).join(', ')+'</div>'
+      +'<div><span style="color:var(--red);font-weight:700">❌ Contra ('+(result.contra?.length||0)+'):</span> '+(result.contra||[]).join(', ')+'</div>'
+      +'<div><span style="color:var(--muted);font-weight:700">⬜ Abstenção ('+(result.abstencao?.length||0)+'):</span> '+(result.abstencao||[]).join(', ')+'</div>'
+      +'</div><div style="margin-top:9px;padding:7px;background:var(--surface2);border-radius:3px;font-size:10px;color:var(--muted);line-height:1.6;border-left:3px solid var(--blue3)"><strong style="color:var(--blue2)">📊 Análise:</strong> '+(result.analise||'')+'</div>'
+      +'<div style="margin-top:7px;font-size:11px;font-weight:700;color:'+(approved?'var(--green2)':'var(--red)')+'">'+( approved?'✅ RESOLUÇÃO APROVADA':'❌ RESOLUÇÃO REJEITADA')+'</div>';
     vlog.appendChild(div); vlog.scrollTop = vlog.scrollHeight;
-  } catch (e) {
-    loading.remove();
-    const err = document.createElement('div'); err.className = 'msg system'; err.innerHTML = '<div class="mtext">Erro: ' + e.message + '</div>';
-    vlog.appendChild(err);
-  }
+  } catch(e) { loading.remove(); const err=document.createElement('div'); err.className='msg system'; err.innerHTML='<div class="mtext">Erro: '+e.message+'</div>'; vlog.appendChild(err); }
 };
 
 window.selectNP = function(type) {
   currentNP = type;
-  document.getElementById('btnIntl').classList.toggle('active', type === 'intl');
-  document.getElementById('btnRegional').classList.toggle('active', type === 'regional');
-  document.getElementById('btnOea').classList.toggle('active', type === 'oea');
+  document.getElementById('btnIntl').classList.toggle('active', type==='intl');
+  document.getElementById('btnRegional').classList.toggle('active', type==='regional');
+  document.getElementById('btnOea').classList.toggle('active', type==='oea');
 };
 
 window.generateNewspaper = async function() {
@@ -501,148 +498,97 @@ window.generateNewspaper = async function() {
   const scroll = document.getElementById('newspaperScroll');
   scroll.innerHTML = '<div class="np-loading">⏳ Redigindo edição...</div>';
   const papers = {
-    intl: { name: 'Reuters / Associated Press', sub: 'INTERNATIONAL WIRE SERVICE · LATIN AMERICA DESK', style: 'agência internacional neutra e factual' },
-    regional: { name: 'Agência Latino-Americana de Notícias', sub: 'COBERTURA REGIONAL · DIREITOS HUMANOS', style: 'agência regional comprometida com direitos humanos' },
-    oea: { name: 'Boletim Oficial da OEA', sub: 'ORGANIZAÇÃO DOS ESTADOS AMERICANOS · SECRETARIA GERAL', style: 'boletim oficial diplomático da OEA' }
+    intl:{name:'Reuters / Associated Press',sub:'INTERNATIONAL WIRE SERVICE · LATIN AMERICA DESK',style:'agência internacional neutra e factual'},
+    regional:{name:'Agência Latino-Americana de Notícias',sub:'COBERTURA REGIONAL · DIREITOS HUMANOS',style:'agência regional comprometida com direitos humanos'},
+    oea:{name:'Boletim Oficial da OEA',sub:'ORGANIZAÇÃO DOS ESTADOS AMERICANOS · SECRETARIA GERAL',style:'boletim oficial diplomático da OEA'}
   };
   const paper = papers[currentNP];
-  const sys = 'Você é editor-chefe de ' + paper.name + '. Redija em português brasileiro no estilo de ' + paper.style + ' sobre o debate da OEA sobre direitos humanos na América Latina. Retorne SOMENTE JSON válido sem markdown: {"manchete":"MANCHETE","subtitulo":"subtítulo","artigo":"parágrafo1\\n\\nparágrafo2","manchete2":"SEGUNDA MANCHETE","noticia2":"parágrafo","manchete3":"TERCEIRA MANCHETE","noticia3":"parágrafo","destaque":"FRASE","destaque_sub":"contexto","editorial":"análise"}';
-  const prompt = 'OEA 2025: direitos humanos na América Latina. Foco: Venezuela, Haiti, Nicarágua, Cuba. Instrumentos: CIDH, Corte IDH, Carta Democrática.';
   let np = {};
   try {
-    const raw = await callClaude(sys, [{ role: 'user', content: prompt }], 1000);
-    np = JSON.parse(raw.replace(/```json|```/g, '').trim());
-  } catch (e) { scroll.innerHTML = '<div class="np-loading">Erro: ' + e.message + '</div>'; btn.disabled = false; return; }
-  const today = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+    const raw = await callClaude('Você é editor-chefe de '+paper.name+'. Redija em português brasileiro no estilo de '+paper.style+' sobre o debate da OEA sobre DH na América Latina. Retorne SOMENTE JSON sem markdown: {"manchete":"MANCHETE","subtitulo":"subtítulo","artigo":"par1\\n\\npar2","manchete2":"2ª MANCHETE","noticia2":"parágrafo","manchete3":"3ª MANCHETE","noticia3":"parágrafo","destaque":"FRASE","destaque_sub":"contexto","editorial":"análise"}',
+      [{role:'user',content:'OEA 2025: DH na América Latina. Foco: Venezuela, Haiti, Nicarágua, Cuba. Instrumentos: CIDH, Corte IDH, Carta Democrática.'}], 1000);
+    np = JSON.parse(raw.replace(/```json|```/g,'').trim());
+  } catch(e) { scroll.innerHTML='<div class="np-loading">Erro: '+e.message+'</div>'; btn.disabled=false; return; }
+  fbLog('jornal', { veiculo: paper.name, manchete: np.manchete });
+  const today = new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
   scroll.innerHTML = '';
   const edDiv = document.createElement('div');
   edDiv.innerHTML = '<div class="np-edition">'
-    + '<div class="np-hdr"><div class="np-hdr-top"><span>EDIÇÃO ESPECIAL · OEA 2025</span><span>' + today.toUpperCase() + '</span><span>EM SESSÃO</span></div>'
-    + '<div class="np-masthead">' + paper.name + '</div><div class="np-subhead">' + paper.sub + '</div>'
-    + '<div class="np-dateline"><span>COBERTURA ESPECIAL · DIREITOS HUMANOS NA AMÉRICA LATINA</span><span>Washington D.C.</span></div></div>'
-    + '<div class="np-body">'
-    + '<div class="np-main"><div class="np-headline">' + (np.manchete || '') + '</div><div class="np-byline">Correspondente especial · ' + today + '</div>'
-    + '<div class="np-article">' + (np.artigo || '').replace(/\n\n/g, '<br><br>') + '</div>'
-    + '<div style="font-size:8px;font-style:italic;color:var(--muted);margin-top:4px">' + (np.subtitulo || '') + '</div></div>'
-    + '<div class="np-side"><div class="np-side-head">' + (np.manchete2 || '') + '</div><div class="np-side-text">' + (np.noticia2 || '') + '</div></div>'
-    + '<div class="np-side"><div class="np-side-head">' + (np.manchete3 || '') + '</div><div class="np-side-text">' + (np.noticia3 || '') + '</div>'
-    + '<div style="margin-top:7px;font-size:8px;font-weight:700;color:var(--blue2);text-transform:uppercase">Análise</div>'
-    + '<div class="np-side-text" style="font-style:italic">' + (np.editorial || '') + '</div></div>'
-    + '<div class="np-prop"><div class="np-prop-text">' + (np.destaque || '') + '</div><div class="np-prop-sub">' + (np.destaque_sub || '') + '</div></div>'
-    + '</div><div class="np-footer"><span>' + paper.name + '</span><span>Simulação educacional · OEA Model UN</span><span>' + today + '</span></div></div>';
+    +'<div class="np-hdr"><div class="np-hdr-top"><span>EDIÇÃO ESPECIAL · OEA 2025</span><span>'+today.toUpperCase()+'</span><span>EM SESSÃO</span></div>'
+    +'<div class="np-masthead">'+paper.name+'</div><div class="np-subhead">'+paper.sub+'</div>'
+    +'<div class="np-dateline"><span>COBERTURA ESPECIAL · DIREITOS HUMANOS NA AMÉRICA LATINA</span><span>Washington D.C.</span></div></div>'
+    +'<div class="np-body">'
+    +'<div class="np-main"><div class="np-headline">'+(np.manchete||'')+'</div><div class="np-byline">Correspondente especial · '+today+'</div>'
+    +'<div class="np-article">'+(np.artigo||'').replace(/\n\n/g,'<br><br>')+'</div>'
+    +'<div style="font-size:8px;font-style:italic;color:var(--muted);margin-top:4px">'+(np.subtitulo||'')+'</div></div>'
+    +'<div class="np-side"><div class="np-side-head">'+(np.manchete2||'')+'</div><div class="np-side-text">'+(np.noticia2||'')+'</div></div>'
+    +'<div class="np-side"><div class="np-side-head">'+(np.manchete3||'')+'</div><div class="np-side-text">'+(np.noticia3||'')+'</div>'
+    +'<div style="margin-top:7px;font-size:8px;font-weight:700;color:var(--blue2);text-transform:uppercase">Análise</div>'
+    +'<div class="np-side-text" style="font-style:italic">'+(np.editorial||'')+'</div></div>'
+    +'<div class="np-prop"><div class="np-prop-text">'+(np.destaque||'')+'</div><div class="np-prop-sub">'+(np.destaque_sub||'')+'</div></div>'
+    +'</div><div class="np-footer"><span>'+paper.name+'</span><span>Simulação educacional · OEA Model UN</span><span>'+today+'</span></div></div>';
   scroll.appendChild(edDiv);
-
-  // Botão PDF
-  const pdfDiv = document.createElement('div');
-  pdfDiv.style.cssText = 'text-align:center;padding:12px 0 8px;';
-  const pdfBtn = document.createElement('button');
-  pdfBtn.style.cssText = 'background:var(--blue2);color:#fff;border:none;padding:8px 20px;border-radius:3px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;';
-  pdfBtn.textContent = '📄 EXPORTAR EDIÇÃO EM PDF';
-  pdfBtn.onclick = function() { exportNewspaperPDF(np, paper, today); };
-  pdfDiv.appendChild(pdfBtn);
-  scroll.appendChild(pdfDiv);
-
+  const pdfDiv = document.createElement('div'); pdfDiv.style.cssText='text-align:center;padding:12px 0 8px;';
+  const pdfBtn = document.createElement('button'); pdfBtn.style.cssText='background:var(--blue2);color:#fff;border:none;padding:8px 20px;border-radius:3px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;';
+  pdfBtn.textContent='📄 EXPORTAR EM PDF'; pdfBtn.onclick=function(){exportPDF(np,paper,today);};
+  pdfDiv.appendChild(pdfBtn); scroll.appendChild(pdfDiv);
   btn.disabled = false;
 };
 
-function exportNewspaperPDF(np, paper, today) {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  const margin = 18, pageW = 210, cW = pageW - margin * 2;
-  let y = 18;
-
-  function addText(text, size, color, bold) {
-    doc.setFontSize(size);
-    doc.setTextColor(...(color || [26, 42, 58]));
-    doc.setFont('helvetica', bold ? 'bold' : 'normal');
-    const clean = (text || '').replace(/<[^>]+>/g, '').replace(/&amp;/g, '&');
-    const lines = doc.splitTextToSize(clean, cW);
-    lines.forEach(l => {
-      if (y > 278) { doc.addPage(); y = 18; }
-      doc.text(l, margin, y); y += size * 0.45;
-    });
-    y += 2;
+function exportPDF(np, paper, today) {
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const margin=18,pageW=210,cW=pageW-margin*2; let y=18;
+  function addText(text,size,color,bold){
+    doc.setFontSize(size);doc.setTextColor(...(color||[26,42,58]));doc.setFont('helvetica',bold?'bold':'normal');
+    const clean=(text||'').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&');
+    doc.splitTextToSize(clean,cW).forEach(l=>{if(y>278){doc.addPage();y=18;}doc.text(l,margin,y);y+=size*0.45;});y+=2;
   }
-
-  // Cabeçalho azul
-  doc.setFillColor(26, 58, 107);
-  doc.rect(0, 0, 210, 28, 'F');
-  doc.setFontSize(7); doc.setTextColor(200, 200, 200); doc.setFont('helvetica', 'normal');
-  doc.text('EDIÇÃO ESPECIAL · OEA 2025 · ' + today.toUpperCase(), margin, 8);
-  doc.setFontSize(14); doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold');
-  doc.text(paper.name, margin, 17);
-  doc.setFontSize(7); doc.setTextColor(180, 200, 220); doc.setFont('helvetica', 'normal');
-  doc.text(paper.sub, margin, 23);
-  y = 36;
-
-  // Linha dourada
-  doc.setDrawColor(200, 150, 10); doc.setLineWidth(0.8); doc.line(margin, y, pageW - margin, y); y += 6;
-
-  // Manchete principal
-  addText(np.manchete || '', 15, [26, 58, 107], true);
-  addText('Correspondente especial · ' + today + (np.subtitulo ? ' — ' + np.subtitulo : ''), 8, [100, 120, 140], false);
-  doc.setDrawColor(197, 213, 232); doc.setLineWidth(0.3); doc.line(margin, y, pageW - margin, y); y += 4;
-  addText(np.artigo || '', 10, [26, 42, 58], false);
-  y += 3;
-
-  // Segunda manchete
-  doc.setDrawColor(197, 213, 232); doc.setLineWidth(0.3); doc.line(margin, y, pageW - margin, y); y += 4;
-  addText(np.manchete2 || '', 12, [26, 58, 107], true);
-  addText(np.noticia2 || '', 10, [26, 42, 58], false);
-  y += 3;
-
-  // Terceira manchete
-  doc.setDrawColor(197, 213, 232); doc.setLineWidth(0.3); doc.line(margin, y, pageW - margin, y); y += 4;
-  addText(np.manchete3 || '', 12, [26, 58, 107], true);
-  addText(np.noticia3 || '', 10, [26, 42, 58], false);
-  y += 3;
-
-  // Editorial
-  doc.setDrawColor(197, 213, 232); doc.setLineWidth(0.3); doc.line(margin, y, pageW - margin, y); y += 4;
-  addText('ANÁLISE EDITORIAL', 8, [42, 82, 152], true);
-  addText(np.editorial || '', 10, [26, 42, 58], false);
-  y += 4;
-
-  // Destaque
-  if (y > 262) { doc.addPage(); y = 18; }
-  doc.setFillColor(26, 58, 107);
-  doc.rect(margin, y, cW, 18, 'F');
-  doc.setFontSize(10); doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold');
-  doc.text(doc.splitTextToSize((np.destaque || '').toUpperCase(), cW - 8), margin + 4, y + 7);
-  doc.setFontSize(8); doc.setTextColor(180, 200, 220); doc.setFont('helvetica', 'normal');
-  doc.text(np.destaque_sub || '', margin + 4, y + 15);
-  y += 24;
-
-  // Rodapé
-  doc.setFontSize(7); doc.setTextColor(140, 160, 180);
-  doc.text(paper.name + ' · Simulação educacional · OEA Model UN · ' + today, margin, 290);
-
-  doc.save(paper.name.replace(/[\s/]/g, '_') + '_' + new Date().toISOString().slice(0,10) + '.pdf');
+  doc.setFillColor(26,58,107);doc.rect(0,0,210,28,'F');
+  doc.setFontSize(7);doc.setTextColor(200,200,200);doc.setFont('helvetica','normal');doc.text('EDIÇÃO ESPECIAL · OEA 2025 · '+today.toUpperCase(),margin,8);
+  doc.setFontSize(14);doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.text(paper.name,margin,17);
+  doc.setFontSize(7);doc.setTextColor(180,200,220);doc.setFont('helvetica','normal');doc.text(paper.sub,margin,23);
+  y=36;
+  doc.setDrawColor(200,150,10);doc.setLineWidth(0.8);doc.line(margin,y,pageW-margin,y);y+=6;
+  addText(np.manchete||'',15,[26,58,107],true);
+  addText('Correspondente especial · '+today+(np.subtitulo?' — '+np.subtitulo:''),8,[100,120,140],false);
+  doc.setDrawColor(197,213,232);doc.setLineWidth(0.3);doc.line(margin,y,pageW-margin,y);y+=4;
+  addText(np.artigo||'',10,[26,42,58],false);y+=3;
+  doc.setDrawColor(197,213,232);doc.line(margin,y,pageW-margin,y);y+=4;
+  addText(np.manchete2||'',12,[26,58,107],true);addText(np.noticia2||'',10,[26,42,58],false);y+=3;
+  doc.setDrawColor(197,213,232);doc.line(margin,y,pageW-margin,y);y+=4;
+  addText(np.manchete3||'',12,[26,58,107],true);addText(np.noticia3||'',10,[26,42,58],false);y+=3;
+  doc.setDrawColor(197,213,232);doc.line(margin,y,pageW-margin,y);y+=4;
+  addText('ANÁLISE EDITORIAL',8,[42,82,152],true);addText(np.editorial||'',10,[26,42,58],false);y+=4;
+  if(y>262){doc.addPage();y=18;}
+  doc.setFillColor(26,58,107);doc.rect(margin,y,cW,18,'F');
+  doc.setFontSize(10);doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');
+  doc.text(doc.splitTextToSize((np.destaque||'').toUpperCase(),cW-8),margin+4,y+7);
+  doc.setFontSize(8);doc.setTextColor(180,200,220);doc.setFont('helvetica','normal');doc.text(np.destaque_sub||'',margin+4,y+15);
+  doc.setFontSize(7);doc.setTextColor(140,160,180);doc.text(paper.name+' · Simulação educacional · OEA Model UN · '+today,margin,290);
+  doc.save(paper.name.replace(/[\s/]/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.pdf');
 }
 
 function initMap() {
   const tooltip = document.getElementById('mapTooltip');
   document.querySelectorAll('.country').forEach(g => {
-    g.addEventListener('mouseenter', function(e) {
-      tooltip.innerHTML = '<strong>' + this.dataset.name + '</strong><br><span style="font-size:9px;opacity:0.9">' + this.dataset.info + '</span>';
-      tooltip.classList.remove('hidden');
-    });
-    g.addEventListener('mousemove', function(e) { tooltip.style.left = (e.clientX + 12) + 'px'; tooltip.style.top = (e.clientY - 10) + 'px'; });
-    g.addEventListener('mouseleave', () => tooltip.classList.add('hidden'));
-    g.addEventListener('click', function() { document.getElementById('inp').value = 'Qual a situação dos direitos humanos em ' + this.dataset.name + ' segundo a sua delegação?'; switchTab('chat'); });
+    g.addEventListener('mouseenter',function(e){tooltip.innerHTML='<strong>'+this.dataset.name+'</strong><br><span style="font-size:9px;opacity:0.9">'+this.dataset.info+'</span>';tooltip.classList.remove('hidden');});
+    g.addEventListener('mousemove',function(e){tooltip.style.left=(e.clientX+12)+'px';tooltip.style.top=(e.clientY-10)+'px';});
+    g.addEventListener('mouseleave',()=>tooltip.classList.add('hidden'));
+    g.addEventListener('click',function(){document.getElementById('inp').value='Qual a situação dos direitos humanos em '+this.dataset.name+' segundo a sua delegação?';switchTab('chat');});
   });
 }
 
 function switchTab(t) {
-  ['chat', 'resolution', 'vote', 'newspaper', 'map'].forEach((id, i) => {
-    document.querySelectorAll('.tab')[i].classList.toggle('active', id === t);
-    document.getElementById('tab-' + id).classList.toggle('active', id === t);
+  ['chat','resolution','vote','newspaper','map'].forEach((id,i)=>{
+    document.querySelectorAll('.tab')[i].classList.toggle('active',id===t);
+    document.getElementById('tab-'+id).classList.toggle('active',id===t);
   });
-  if (t === 'map') setTimeout(initMap, 100);
+  if(t==='map')setTimeout(initMap,100);
 }
 
 renderDelegates();
-checkApiKey();
+checkInit();
 </script>
 </body>
 </html>
