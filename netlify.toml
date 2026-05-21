@@ -1,6 +1,6 @@
 # Configuração do site no Netlify.
 # Site é estático (HTML/JS no diretório raiz) + uma Function em
-# netlify/functions/claude.mjs que faz proxy para a Anthropic.
+# netlify/functions/proxy.mjs que faz proxy para a Anthropic.
 
 [build]
   publish = "."
@@ -16,7 +16,7 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://oea-model-un-default-rtdb.firebaseio.com; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' data:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://oea-model-un-225f1-default-rtdb.firebaseio.com; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"

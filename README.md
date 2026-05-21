@@ -1,21 +1,27 @@
-# OEA Model UN
+# OEA — Internationali Negotia · Model UN
 
-Simulador educacional da Assembleia Geral da OEA. Os alunos atuam como
-delegações e conversam com um assistente de IA; o professor acompanha em
-tempo real por um painel separado.
+Simulador educacional da Assembleia Geral da OEA — área de Direitos Humanos,
+no formato da Internationali Negotia (Modelo Internacional do Brasil). Os
+alunos atuam como delegações, redigem DPOs, resoluções e emendas conforme as
+regras de procedimento. Cuba é delegação privilegiada (postura: *outsider
+crítico*).
 
-- `index.html` — interface do aluno
-- `professor.html` — painel do professor
-- `netlify/functions/claude.mjs` — proxy server-side para a Anthropic
+- `index.html` — interface completa do aluno (chat, DPO, resolução, votação, jornal, mapa)
+- `netlify/functions/proxy.mjs` — proxy server-side para a Anthropic
 - `netlify.toml` — config de deploy + headers de segurança
+
+O painel do professor ("Mesa Diretora") é embutido no `index.html` — aparece
+automaticamente quando o Firebase Realtime Database tem dados na sessão.
 
 ## Arquitetura
 
 - **Frontend estático** (HTML/JS na raiz).
-- **Firebase Realtime Database** sincroniza atividades de aluno → painel do
-  professor, sob `oea_rooms/{COD_SALA}/{players|chat|votes}`.
-- **API da Anthropic** chamada por uma Netlify Function — a chave fica numa
-  variável de ambiente no painel do Netlify, **nunca no navegador do aluno**.
+- **API da Anthropic** chamada por uma Netlify Function — a chave fica em env
+  var no painel do Netlify, **nunca no navegador do aluno**.
+- **Firebase Realtime Database** sincroniza fase da sessão, foco, timer,
+  boletins do professor e documentos submetidos pelos alunos, em
+  `sessions/{SESSION_ID}/`.
+- Session ID vem de `?session=...` na URL (default: `oea-demo`).
 
 ## Deploy no Netlify
 
@@ -29,52 +35,45 @@ tempo real por um painel separado.
 
 ### Passo 2 — Configurar a env var da Anthropic
 
-No painel do Netlify, em **Site settings → Environment variables → Add a
-variable**, crie:
+Em **Site settings → Environment variables → Add a variable**:
 
 | Key | Value |
 |-----|-------|
-| `ANTHROPIC_API_KEY` | `sk-ant-api03-...` (sua chave) |
+| `ANTHROPIC_API_KEY` | `sk-ant-api03-...` |
 
-Recomendamos uma chave **dedicada a este projeto**, com **limite de gasto
-configurado** em [console.anthropic.com](https://console.anthropic.com/) →
-Settings → Limits.
+Recomendamos uma chave dedicada com **limite de gasto** em
+[console.anthropic.com](https://console.anthropic.com/) → Settings → Limits.
 
-Após criar a variável, faça um **redeploy** (o Netlify só carrega env vars
-em builds novos).
+Após criar a variável, **trigger deploy** (o Netlify só lê env vars em builds
+novos).
 
 ### Passo 3 — Autorizar o domínio no Firebase
 
-No console do Firebase, em **Authentication → Settings → Authorized domains**,
-adicione:
+No console do Firebase (projeto **oea-model-un-225f1**), em
+**Authentication → Settings → Authorized domains**, adicione:
 
 - `<seu-site>.netlify.app`
 - Domínio custom, se for usar
 
-Sem isso, a Realtime Database recusa conexões da nova URL.
+Sem isso, o Realtime Database recusa conexões da nova URL.
 
-### Passo 4 — Configurar as regras do Realtime Database
+### Passo 4 — Regras do Realtime Database
 
 **Imprescindível antes de usar com alunos reais.** Sem regras, qualquer
-pessoa com a URL do banco lê/escreve em qualquer sala.
+pessoa com a URL do banco lê/escreve em qualquer sessão.
 
-No console do Firebase → **Realtime Database → Rules**, mínimo:
+No console → **Realtime Database → Rules**, mínimo:
 
 ```json
 {
   "rules": {
-    "oea_rooms": {
-      "$room": {
+    "sessions": {
+      "$sid": {
         ".read": true,
         ".write": true,
-        "players": {
-          "$uid": {
-            ".validate": "newData.hasChildren(['name'])"
-          }
-        },
-        "chat": {
-          "$msg": {
-            ".validate": "newData.hasChildren(['type','uid','text']) && newData.child('text').isString() && newData.child('text').val().length < 4000"
+        "documents": {
+          "$id": {
+            ".validate": "newData.hasChildren(['type','country','content']) && newData.child('content').isString() && newData.child('content').val().length < 20000"
           }
         }
       }
@@ -83,26 +82,8 @@ No console do Firebase → **Realtime Database → Rules**, mínimo:
 }
 ```
 
-Para impedir que aluno A se passe por aluno B, habilite Anonymous Auth e
-troque `.write` por `auth != null && newData.child('uid').val() === auth.uid`.
-
-### Passo 5 — Trocar a senha do painel do professor
-
-A senha está armazenada como hash SHA-256 em `professor.html`
-(constante `SENHA_HASH`). O valor atual corresponde a `professor2025`.
-**Troque antes de distribuir.**
-
-Para gerar um hash novo, rode no console do navegador:
-
-```js
-crypto.subtle.digest('SHA-256', new TextEncoder().encode('SUA_SENHA_NOVA'))
-  .then(b => console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')));
-```
-
-Cole o resultado em `SENHA_HASH` e faça commit.
-
-> Este portão é só um detrente — o controle real de acesso aos dados depende
-> das regras do Realtime Database (Passo 4).
+Para um controle real (impedir que aluno A escreva sobre aluno B), habilite
+Anonymous Auth e troque `.write` por regras baseadas em `auth.uid`.
 
 ## Desenvolvimento local
 
@@ -112,36 +93,35 @@ Netlify CLI:
 ```bash
 npm install -g netlify-cli
 netlify login
-netlify link            # conecta o diretório ao site
-netlify env:set ANTHROPIC_API_KEY sk-ant-...   # ou use o painel
-netlify dev             # sobe HTML + Function em http://localhost:8888
+netlify link
+netlify env:set ANTHROPIC_API_KEY sk-ant-...
+netlify dev   # sobe HTML + Function em http://localhost:8888
 ```
+
+Para testar com uma sessão específica: `http://localhost:8888/?session=turma-2025-A`.
 
 ## Notas de segurança aplicadas
 
-- **Headers HTTP** (via `netlify.toml`): CSP, X-Frame-Options=DENY,
-  X-Content-Type-Options=nosniff, Referrer-Policy, Permissions-Policy.
-- **CSP em `<meta>`** dentro dos HTMLs como defesa em camadas / fallback.
-- **SRI** (`integrity=...`) no `<script>` do jsPDF.
-- **Chave da Anthropic** vive só na env var do Netlify; passa pelo proxy
-  com validação de tamanho e do `model`.
-- Todo dado vindo do usuário / do Firebase / da IA passa por `esc()` ou é
-  inserido via `textContent` antes de virar HTML — fechando o caminho de
-  XSS via prompt injection ou via banco.
-- Identidade do aluno usa **UID gerado por `crypto.getRandomValues`** em
-  vez do nome — assim renomear não duplica nem sobrescreve registros.
-- Código de sala normalizado em maiúsculas (`A-Z 0-9 _ -`) nas duas pontas.
-- Senha do professor virou hash SHA-256 com comparação em tempo constante.
-- Rate-limit simples no botão de envio do chat (≥ 800 ms entre chamadas).
+- **Headers HTTP** via `netlify.toml`: CSP, X-Frame-Options=DENY, nosniff,
+  Referrer-Policy, Permissions-Policy, Cross-Origin-Opener-Policy.
+- **CSP em `<meta>`** dentro do HTML como defesa em camadas.
+- **Chave da Anthropic** vive só na env var do Netlify; o proxy valida modelo
+  contra whitelist (Haiku 4.5 / Sonnet 4.6 / Opus 4.7) e trunca payloads.
+- Todo dado dinâmico (input do aluno, resposta da IA, JSON do voto, JSON do
+  jornal, boletins da Mesa, tooltip do mapa) é renderizado via `textContent`
+  ou passa por `esc()` antes de virar HTML. Fecha o caminho de prompt
+  injection → XSS e injeção via Firebase.
+- Inline handlers `onclick=` permitidos pela CSP (`'unsafe-inline'`) — eles
+  ainda existem em ~46 lugares; substituir todos exigiria refator amplo, e
+  como apontam pra funções fixas, não são vetor de injeção.
 
-## Esquema da Realtime Database
+## Schema do Realtime Database
 
 ```
-oea_rooms/{ROOM}/
-  players/{uid} = { name, charId, charName, flag, region, online, joinedAt }
-  chat/{key}    = { type: 'chat'|'resolution', uid, senderName, charName,
-                    flag, text, resType?, resTitle?, ts }
-  votes/{key}   = { id, resTitle, resType, proposedBy, flag,
-                    results: {favor, contra, abstencao},
-                    voters: {}, approved, ts }
+sessions/{SID}/
+  meta = { phase, topic, focus }       # controlado pela Mesa Diretora
+  news/{id} = { source, type, headline, body, publishedAt }
+  timer = { running, startedAt, duration, remaining }
+  documents/{id} = { type, country, delegate, content, sponsors?, signatories?, submittedAt }
+  delegates/{cc} = { student, present, lastSeen }
 ```

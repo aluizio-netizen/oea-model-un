@@ -3,11 +3,18 @@
 // do aluno. Modelo, max_tokens e tamanhos de payload são limitados aqui para
 // controlar custo.
 
-const MODEL = 'claude-haiku-4-5-20251001';
-const MAX_TOKENS_HARD_LIMIT = 1500;
-const MAX_MESSAGES = 60;
-const MAX_MSG_CHARS = 4000;
-const MAX_SYSTEM_CHARS = 4000;
+// Whitelist de modelos. Cliente que pedir modelo fora desta lista cai no DEFAULT.
+const ALLOWED_MODELS = new Set([
+  'claude-haiku-4-5-20251001',
+  'claude-haiku-4-5',
+  'claude-sonnet-4-6',
+  'claude-opus-4-7',
+]);
+const DEFAULT_MODEL = 'claude-sonnet-4-6';
+const MAX_TOKENS_HARD_LIMIT = 4000;
+const MAX_MESSAGES = 80;
+const MAX_MSG_CHARS = 6000;
+const MAX_SYSTEM_CHARS = 8000;
 
 export const handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -28,6 +35,10 @@ export const handler = async (event) => {
   } catch {
     return json(400, { error: 'JSON inválido.' });
   }
+
+  const model = typeof body.model === 'string' && ALLOWED_MODELS.has(body.model)
+    ? body.model
+    : DEFAULT_MODEL;
 
   const system = typeof body.system === 'string'
     ? body.system.slice(0, MAX_SYSTEM_CHARS)
@@ -58,7 +69,7 @@ export const handler = async (event) => {
         'anthropic-version': '2023-06-01',
         'x-api-key': apiKey,
       },
-      body: JSON.stringify({ model: MODEL, max_tokens, system, messages }),
+      body: JSON.stringify({ model, max_tokens, system, messages }),
     });
 
     const upstreamText = await upstream.text();

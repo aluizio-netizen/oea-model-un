@@ -3,7 +3,9 @@
     "allow": [
       "WebFetch(domain:api.cdnjs.com)",
       "Bash(openssl dgst *)",
-      "Bash(awk '{print $NF}')"
+      "Bash(awk '{print $NF}')",
+      "Bash(git mv *)",
+      "Bash(git add *)"
     ]
   }
 }
