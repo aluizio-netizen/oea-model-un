@@ -628,13 +628,11 @@ async function send(){
   typ.classList.add('on');
   const sys=`${del.persona} português brasileiro. Você é o(a) representante de ${del.name} na sessão da OEA sobre "Remediando um Mal Crônico: Órgãos Regionais e a Negligência sobre os Direitos Humanos na América Latina" (tema baseado no documento da Internationali Negotia). Responda com linguagem diplomática formal e sofisticada. Não quebre o personagem.`;
   try{
-    const r=await fetch('/.netlify/functions/proxy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,system:sys,messages:hist})});
-    const data=await r.json();
-    const reply=data.content?.map(c=>c.text||'').join('')||'Sem resposta.';
+    const reply=await callProxy({model:'claude-sonnet-4-6',max_tokens:1500,system:sys,messages:hist});
     hist.push({role:'assistant',content:reply});
     typ.classList.remove('on');
     addMsg('ai',del.flag,del.name,reply);
-  }catch(e){typ.classList.remove('on');addMsg('system','','','Erro de conexão.');}
+  }catch(e){typ.classList.remove('on');addMsg('system','','',esc('⚠️ '+e.message));}
   btn.disabled=false;inp.focus();
 }
 
@@ -668,6 +666,43 @@ window.quickProcedure=function(type){
   switchTab('chat');
 };
 
+// Wrapper que faz fetch ao proxy e converte respostas de erro em throw
+// com mensagem legível. Centraliza o tratamento dos 3 callers (DPO,
+// resolução, voto, jornal).
+async function callProxy(payload){
+  let r;
+  try{
+    r = await fetch('/.netlify/functions/proxy', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+  }catch(netErr){
+    throw new Error('Falha de rede ao falar com o proxy: ' + netErr.message);
+  }
+  let raw;
+  try{ raw = await r.text(); }catch(e){ raw = ''; }
+  if(!r.ok){
+    // Netlify retorna HTML pra 504/502, então tenta JSON antes
+    let detail = raw.slice(0,200);
+    try{ const j = JSON.parse(raw); detail = j.error || j.detail || detail; }catch{}
+    if(r.status === 504 || r.status === 502){
+      throw new Error('Tempo limite do Netlify excedido ('+r.status+'). O modelo demorou mais de 10s pra responder. Tente um max_tokens menor ou aguarde.');
+    }
+    throw new Error('Proxy '+r.status+': '+detail);
+  }
+  let data;
+  try{ data = JSON.parse(raw); }catch(e){
+    throw new Error('Resposta do proxy não é JSON: '+raw.slice(0,200));
+  }
+  if(data.error){
+    throw new Error('Erro da API: '+(data.error.message||data.error)+(data.detail?' — '+data.detail:''));
+  }
+  const text = (data.content||[]).map(c=>c.text||'').join('');
+  if(!text) throw new Error('Resposta vazia da IA.');
+  return text;
+}
+
 // DPO
 async function generateDPO(){
   const country=document.getElementById('dpoCountry').value;
@@ -679,9 +714,7 @@ async function generateDPO(){
   const sys=`Você é especialista em direito internacional e diplomacia da OEA. Redija um Documento de Posição Oficial (DPO) no formato exato da Internationali Negotia. O DPO deve: (1) Usar linguagem diplomática formal em português brasileiro; (2) Ter estrutura: 1º parágrafo = Introdução (situação atual do tema), 2º-4º parágrafos = Desenvolvimento (posição do país, ações tomadas, acordos e tratados), último parágrafo = Conclusão (propostas de solução); (3) Caber em uma página; (4) Terminar com "Respeitosamente," seguido do nome e cargo. ${isCuba?'ATENÇÃO: Cuba deve adotar a postura de OUTSIDER CRÍTICO — suspensa pela Resolução VI de Punta del Este (1962) e tendo RECUSADO a reintegração formalizada pela AG/RES. 2438 (2009), apresenta o DPO no espírito da diplomacia construtiva e do compromisso bolivariano com a verdade histórica latino-americana, SEM RECONHECER a OEA como instância de tutela hemisférica. Diagnóstico estrutural (não conjuntural): subordinação dos direitos econômicos, sociais e culturais aos interesses do capital transnacional, em afronta ao princípio da indivisibilidade consagrado pela Declaração de Viena (1993, §5). Citar manifestações concretas: violência policial racializada (Brasil, Colômbia, EUA), assassinato de defensores ambientais e indígenas (Colômbia e Honduras lideram índices globais — Global Witness), crise migratória nas fronteiras meso-americana e estadunidense, epidemia de feminicídios no Triângulo Norte, encarceramento em massa em El Salvador, deterioração do Haiti, e a atuação da Missão de Observação Eleitoral da OEA na Bolívia em 2019 (relatório posteriormente questionado academicamente, antecedendo os massacres de Sacaba e Senkata). Denunciar o bloqueio econômico imposto pelos EUA desde 1962, agravado pelas Leis Torricelli (1992) e Helms-Burton (1996), como violação massiva e sistemática — condenado em 32 resoluções consecutivas da AGNU e documentado pela Relatora Especial Alena Douhan (2024). Marco jurídico invocado: Carta da ONU (art. 2º), DUDH (1948), Pactos Internacionais (1966), Declaração sobre o Direito ao Desenvolvimento (1986), Viena (1993), UNDRIP (2007), Pacto Global para Migração (2018). Propostas: (I) reconhecimento da indivisibilidade dos DH; (II) condenação das medidas coercitivas unilaterais; (III) auditoria histórica da OEA durante o ciclo das ditaduras militares e da Operação Condor; (IV) mecanismo regional de proteção a defensores ambientais, indígenas e camponesas; (V) fortalecimento da cooperação Sul-Sul em saúde e educação (Brigada Henry Reeve, campanha Yo, sí puedo); (VI) reconhecimento da CELAC como foro legítimo de concertação regional; (VII) repúdio à criminalização da migração e à separação familiar. Encerrar com "Hasta la victoria, siempre." antes da assinatura. Citar Martí, Bolívar, Sandino, Chávez, Fidel — NUNCA Che Guevara em documento institucional formal.':''} Retorne SOMENTE o texto do DPO, sem comentários adicionais.`;
   const prompt=`País: ${country}\nDelegado(a): ${delegateName}\nTema: "Remediando um Mal Crônico: Órgãos Regionais e a Negligência sobre os Direitos Humanos na América Latina"\nComitê: Organização dos Estados Americanos — Área de Direitos Humanos e Questões Sociais\n${points?`Pontos a abordar: ${points}`:''}`;
   try{
-    const r=await fetch('/.netlify/functions/proxy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:3000,system:sys,messages:[{role:'user',content:prompt}]})});
-    const data=await r.json();
-    const text=data.content?.map(c=>c.text||'').join('')||'';
+    const text=await callProxy({model:'claude-sonnet-4-6',max_tokens:3000,system:sys,messages:[{role:'user',content:prompt}]});
     if(window.MESA&&window.MESA.pushDocument)window.MESA.pushDocument('dpo',country,delegateName,text);
     const docId='dpo_'+Date.now();
     window.studentDocs[docId]={type:'dpo',label:'DOCUMENTO DE POSIÇÃO OFICIAL',country,delegate:delegateName,content:text};
@@ -710,7 +743,7 @@ async function generateDPO(){
     div.appendChild(head);div.appendChild(body);div.appendChild(foot);
     log.appendChild(div);log.scrollTop=log.scrollHeight;
     switchTab('chat');
-  }catch(e){alert('Erro ao gerar DPO.');}
+  }catch(e){alert('Erro ao gerar DPO:\n\n'+e.message);}
   btn.disabled=false;btn.textContent='📋 GERAR DPO OFICIAL';
 }
 window.clearDPO=function(){document.getElementById('dpoName').value='';document.getElementById('dpoPoints').value='';};
@@ -753,9 +786,7 @@ async function sendResolution(){
   const sys=`Você é especialista em direito internacional e diplomacia da OEA, com domínio das Regras de Procedimento da Internationali Negotia. Formate o documento oficialmente em português brasileiro. Para PROPOSTA DE RESOLUÇÃO: use pelo menos 7 cláusulas preambulares (verbo no gerúndio em itálico e negrito, terminadas com vírgula) e cláusulas operativas numeradas (verbo no imperativo em itálico, terminadas com ponto e vírgula, última com ponto final). Para EMENDAS: indique claramente o tipo (Modificativa/Aditiva/Supressiva) e a cláusula afetada. Para DOCUMENTO DE TRABALHO: formato livre com informações relevantes ao debate. Sem comentários fora do documento.`;
   const prompt=`TIPO: ${tipoLabel}\nPATROCINADORES: ${patrocinadores}\nSIGNATÁRIOS: ${signatarios}\nCONTEXTO/CONSIDERANDOS: ${context}\nDISPOSITIVOS/CONTEÚDO: ${content}\nCOMITÊ: OEA — Área de Direitos Humanos e Questões Sociais\nTEMA: "Remediando um Mal Crônico: Órgãos Regionais e a Negligência sobre os Direitos Humanos na América Latina"`;
   try{
-    const r=await fetch('/.netlify/functions/proxy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:3500,system:sys,messages:[{role:'user',content:prompt}]})});
-    const data=await r.json();
-    const text=data.content?.map(c=>c.text||'').join('')||'';
+    const text=await callProxy({model:'claude-sonnet-4-6',max_tokens:3500,system:sys,messages:[{role:'user',content:prompt}]});
     if(window.MESA&&window.MESA.pushDocument)window.MESA.pushDocument(tipo,del.name,del.name,text,{sponsors:patrocinadores,signatories:signatarios});
     const resObj={id:'res_'+Date.now(),tipoLabel,title:patrocinadores,text,proposedBy:del.name,flag:del.flag,votes:{favor:0,contra:0,abstencao:0},voted:false,tipo};
     votes.push(resObj);
@@ -791,7 +822,7 @@ async function sendResolution(){
     div.appendChild(head);div.appendChild(body);div.appendChild(foot);
     log.appendChild(div);log.scrollTop=log.scrollHeight;
     switchTab('chat');clearResForm();
-  }catch(e){alert('Erro ao gerar documento.');}
+  }catch(e){alert('Erro ao gerar documento:\n\n'+e.message);}
   btn.disabled=false;btn.textContent='📜 GERAR E PUBLICAR DOCUMENTO';
 }
 
@@ -815,9 +846,7 @@ window.simulateVote=async function(resId){
 {"favor":["País A","País B"],"contra":["País C"],"abstencao":["País D"],"analise":"2 frases","resultado":"APROVADA" ou "REJEITADA","favor_count":0,"contra_count":0,"abstencao_count":0}`;
   const prompt=`Simule a votação nominal dos membros da OEA:\nTIPO: ${res.tipoLabel}\nPATROCINADORES/TÍTULO: ${res.title}\nPROPONENTE PRINCIPAL: ${res.proposedBy}\nAplique regra de maioria qualificada (⅗ dos votos válidos). Considere posições reais de cada país sobre direitos humanos na América Latina.`;
   try{
-    const r=await fetch('/.netlify/functions/proxy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,system:sys,messages:[{role:'user',content:prompt}]})});
-    const data=await r.json();
-    const raw=data.content?.map(c=>c.text||'').join('')||'{}';
+    const raw=await callProxy({model:'claude-sonnet-4-6',max_tokens:1500,system:sys,messages:[{role:'user',content:prompt}]});
     let result={favor:[],contra:[],abstencao:[],analise:'',resultado:'',favor_count:0,contra_count:0,abstencao_count:0};
     try{result=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch(e){}
     loading.remove();
@@ -846,7 +875,10 @@ window.simulateVote=async function(resId){
     vlog.appendChild(div);vlog.scrollTop=vlog.scrollHeight;
   }catch(e){
     loading.remove();
-    const err=document.createElement('div');err.className='msg system';err.innerHTML='<div class="mtext">Erro ao simular votação.</div>';
+    const err=document.createElement('div');err.className='msg system';
+    const m=document.createElement('div');m.className='mtext';
+    m.textContent='⚠️ Erro ao simular votação: '+e.message;
+    err.appendChild(m);
     vlog.appendChild(err);
   }
 };
