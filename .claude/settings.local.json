@@ -5,7 +5,9 @@
       "Bash(openssl dgst *)",
       "Bash(awk '{print $NF}')",
       "Bash(git mv *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }
