@@ -723,10 +723,29 @@ async function sendResolution(){
   const context=document.getElementById('resContext').value.trim();
   const content=document.getElementById('resContent').value.trim();
   if(!patrocinadores||!context||!content){alert('Preencha todos os campos.');return;}
-  // Validar mínimo de signatários
-  const totalSig=(signatarios+','+patrocinadores).split(',').filter(s=>s.trim()).length;
-  if(tipo==='resolucao'&&totalSig<7){alert('A Proposta de Resolução exige pelo menos 7 países signatários (patrocinadores + signatários). Adicione mais países.');return;}
-  if((tipo.startsWith('emenda'))&&totalSig<5){alert('Emendas exigem pelo menos 5 países signatários.');return;}
+  // Validar mínimo de signatários.
+  // Aceita vírgula, ponto-e-vírgula ou quebra de linha como separador.
+  // NÃO usa "." nem " e " porque nomes oficiais contêm ambos (Rep. Dominicana,
+  // Trinidad e Tobago, S. Cristóvão e Névis, S. Vicente e Granadinas).
+  function _countSigs(s){
+    return String(s||'')
+      .replace(/\([^)]*\)/g,'')               // remove notas entre parênteses
+      .split(/[,;\n]+/)
+      .map(x => x.trim())
+      .filter(x => x.length > 0)
+      .length;
+  }
+  const sigPatro = _countSigs(patrocinadores);
+  const sigSig   = _countSigs(signatarios);
+  const totalSig = sigPatro + sigSig;
+  if(tipo==='resolucao'&&totalSig<7){
+    alert('A Proposta de Resolução exige pelo menos 7 países signatários (patrocinadores + signatários).\n\nForam contados: '+sigPatro+' patrocinador(es) + '+sigSig+' signatário(s) = '+totalSig+'.\n\nSepare os países com vírgula, ex: "Venezuela, Bolívia, Nicarágua".');
+    return;
+  }
+  if((tipo.startsWith('emenda'))&&totalSig<5){
+    alert('Emendas exigem pelo menos 5 países signatários.\n\nForam contados: '+totalSig+'.\n\nSepare os países com vírgula.');
+    return;
+  }
   const btn=document.getElementById('resBtn');btn.disabled=true;btn.textContent='⏳ GERANDO...';
   const del=DELEGATES.find(d=>d.id===cur);
   const tipoLabels={resolucao:'PROPOSTA DE RESOLUÇÃO',trabalho:'DOCUMENTO DE TRABALHO',emenda_mod:'EMENDA MODIFICATIVA',emenda_adi:'EMENDA ADITIVA',emenda_sup:'EMENDA SUPRESSIVA',agenda:'AGENDA'};
