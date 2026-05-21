@@ -1,0 +1,32 @@
+# Configuração do site no Netlify.
+# Site é estático (HTML/JS no diretório raiz) + uma Function em
+# netlify/functions/claude.mjs que faz proxy para a Anthropic.
+
+[build]
+  publish = "."
+  command = ""
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Headers de segurança aplicados a todas as páginas. CSP em header HTTP é
+# mais forte que CSP em <meta> (não pode ser sobrescrita por injeção no HTML).
+# Mantemos a tag <meta> nos HTMLs como defesa em camadas / fallback local.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://oea-model-un-default-rtdb.firebaseio.com; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+    Cross-Origin-Opener-Policy = "same-origin"
+
+# A Function tem seu próprio Content-Type; não precisamos das proteções de
+# clickjacking, mas mantemos nosniff.
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

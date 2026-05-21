@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://oea-model-un-default-rtdb.firebaseio.com; object-src 'none'; base-uri 'none'; form-action 'none';"/>
 <title>OEA — Model UN</title>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#f0f4f8;--surface:#fff;--surface2:#e8f0f8;--border:#c5d5e8;--border2:#a0bdd8;--blue:#1a3a6b;--blue2:#2a5298;--blue3:#3a6bc4;--gold:#c8960a;--gold2:#e8b020;--red:#b02020;--green2:#2a8a4a;--text:#1a2a3a;--muted:#4a6a8a;--dim:#8aaac4;--white:#fff}
@@ -43,16 +44,17 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
 .msg{max-width:86%}
 .msg.system{max-width:100%;background:rgba(26,58,107,0.06);border-left:3px solid var(--blue3);padding:10px 13px;font-size:11px;color:var(--muted);line-height:1.6;border-radius:0 4px 4px 0}
 .msg.user{align-self:flex-end;background:var(--blue2);border-radius:8px 8px 2px 8px;padding:9px 13px}
-.msg.user .mtext{color:#fff;font-size:11px;line-height:1.6}
+.msg.user .mtext{color:#fff;font-size:11px;line-height:1.6;white-space:pre-wrap}
 .msg.user .mhdr{color:rgba(255,255,255,0.8);font-size:9px;margin-bottom:4px;font-weight:700}
 .msg.ai{align-self:flex-start;background:#fff;border:1px solid var(--border);border-radius:8px 8px 8px 2px;padding:9px 13px}
-.msg.ai .mtext{color:var(--text);font-size:11px;line-height:1.7}
+.msg.ai .mtext{color:var(--text);font-size:11px;line-height:1.7;white-space:pre-wrap}
 .msg.ai .mhdr{font-size:9px;color:var(--blue2);margin-bottom:4px;font-weight:700}
 .msg.resolution{max-width:100%;background:#fffbf0;border:1px solid var(--gold);border-left:4px solid var(--gold2);padding:12px 14px;border-radius:0 4px 4px 0}
 .msg.vote-msg{max-width:100%;background:#f0f8f0;border:1px solid var(--green2);border-left:4px solid var(--green2);padding:12px 14px;border-radius:0 4px 4px 0}
 .mhdr-res{font-size:10px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:1px}
 .mhdr-vote{font-size:10px;font-weight:700;color:var(--green2);margin-bottom:6px}
 .mtext{font-size:11px;line-height:1.7;color:var(--text)}
+.mtext.diplo{font-family:Georgia,serif;font-size:11px;line-height:1.8;white-space:pre-wrap}
 .typing{font-size:10px;color:var(--muted);padding:4px 14px;display:none;font-style:italic;flex-shrink:0}.typing.on{display:block}
 .inputrow{border-top:1px solid var(--border);padding:9px 12px;display:flex;gap:7px;background:#fff;flex-shrink:0}
 .msginput{flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);font-size:11px;padding:7px 11px;font-family:inherit;outline:none;min-width:0;border-radius:3px}
@@ -89,7 +91,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
 .np-main{grid-column:1/-1;border-bottom:1px solid var(--border);padding-bottom:8px}
 .np-headline{font-size:14px;font-weight:700;line-height:1.2;color:var(--blue);margin-bottom:4px;font-family:'Merriweather',serif}
 .np-byline{font-size:8px;color:var(--muted);margin-bottom:6px;font-family:'Open Sans',sans-serif}
-.np-article{font-size:9px;line-height:1.6;color:var(--text);text-align:justify;column-count:2;column-gap:12px}
+.np-article{font-size:9px;line-height:1.6;color:var(--text);text-align:justify;column-count:2;column-gap:12px;white-space:pre-wrap}
 .np-side{border-right:1px solid var(--border);padding-right:8px}.np-side:last-child{border-right:none;padding-right:0}
 .np-side-head{font-size:10px;font-weight:700;color:var(--blue);margin-bottom:3px;border-top:1px solid var(--border);padding-top:6px;font-family:'Merriweather',serif}
 .np-side-text{font-size:8px;line-height:1.5;color:var(--text);text-align:justify}
@@ -125,7 +127,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
 .modal input:focus{border-color:var(--blue3)}
 .modal-btn{width:100%;background:var(--blue2);color:#fff;border:none;padding:10px;border-radius:4px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;margin-top:4px}
 .modal-btn:hover{background:var(--blue3)}
+.modal-btn.sec{background:transparent;border:1px solid var(--border);color:var(--muted);margin-top:6px}
+.modal-btn.sec:hover{border-color:var(--blue3);color:var(--blue2)}
 .modal-note{font-size:10px;color:var(--dim);margin-top:8px;text-align:center}
+.modal-warn{font-size:10px;color:var(--red);background:#fff0f0;border:1px solid #f4cccc;padding:7px 9px;border-radius:4px;margin-bottom:8px;line-height:1.5}
 .fb-badge{position:fixed;bottom:10px;right:10px;background:rgba(26,58,107,0.9);color:#fff;font-size:9px;padding:4px 10px;border-radius:10px;z-index:100;display:flex;align-items:center;gap:5px}
 .fb-dot{width:6px;height:6px;border-radius:50%;background:#4adc7a;animation:pulse 2s ease-in-out infinite}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
@@ -139,19 +144,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
   <div class="modal">
     <h2>👤 Identificação do Aluno</h2>
     <p>Digite seu nome e o código da turma fornecido pelo professor. Sua participação será monitorada em tempo real.</p>
-    <input type="text" id="studentNameInput" placeholder="Seu nome completo..."/>
-    <input type="text" id="studentCodeInput" placeholder="Código da turma (ex: turma-2025-A)..."/>
-    <button class="modal-btn" onclick="saveStudentName()">Entrar na Sessão →</button>
-  </div>
-</div>
-
-<div class="modal-overlay hidden" id="modalApi">
-  <div class="modal">
-    <h2>🔑 Chave de API</h2>
-    <p>Insira sua chave de API da Anthropic para ativar o assistente de IA.</p>
-    <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..."/>
-    <button class="modal-btn" onclick="saveApiKey()">Salvar →</button>
-    <div class="modal-note">Obtenha em <strong>console.anthropic.com</strong> → API Keys</div>
+    <input type="text" id="studentNameInput" placeholder="Seu nome completo..." maxlength="80"/>
+    <input type="text" id="studentCodeInput" placeholder="Código da turma (ex: OEA4F2X)" maxlength="32"/>
+    <button class="modal-btn" id="btnSaveName">Entrar na Sessão →</button>
   </div>
 </div>
 
@@ -168,7 +163,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
   <div class="badge">EM SESSÃO</div>
   <div class="hdr-right">
     <div class="hdr-player" id="hdrPlayer">Selecione sua delegação</div>
-    <button class="hdr-btn" onclick="document.getElementById('modalApi').classList.remove('hidden')">🔑 API</button>
   </div>
 </div>
 
@@ -179,11 +173,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
   </div>
   <div class="center">
     <div class="tabs">
-      <button class="tab active" onclick="switchTab('chat')">💬 Debate</button>
-      <button class="tab" onclick="switchTab('resolution')">📜 Resolução</button>
-      <button class="tab" onclick="switchTab('vote')">🗳️ Votação</button>
-      <button class="tab" onclick="switchTab('newspaper')">📰 Jornal</button>
-      <button class="tab" onclick="switchTab('map')">🗺️ Mapa</button>
+      <button class="tab active" data-tab="chat">💬 Debate</button>
+      <button class="tab" data-tab="resolution">📜 Resolução</button>
+      <button class="tab" data-tab="vote">🗳️ Votação</button>
+      <button class="tab" data-tab="newspaper">📰 Jornal</button>
+      <button class="tab" data-tab="map">🗺️ Mapa</button>
     </div>
     <div class="tabpanel active" id="tab-chat">
       <div class="chatlog" id="chatLog">
@@ -191,8 +185,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
       </div>
       <div class="typing" id="typing">Delegado redigindo pronunciamento...</div>
       <div class="inputrow">
-        <input class="msginput" type="text" id="inp" placeholder="Faça uso da palavra, Senhor(a) Delegado(a)..." onkeydown="if(event.key==='Enter')send()"/>
-        <button class="sendbtn" id="sbtn" onclick="send()">ENVIAR</button>
+        <input class="msginput" type="text" id="inp" placeholder="Faça uso da palavra, Senhor(a) Delegado(a)..." maxlength="2000"/>
+        <button class="sendbtn" id="sbtn">ENVIAR</button>
       </div>
     </div>
     <div class="tabpanel" id="tab-resolution">
@@ -201,11 +195,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
         <div class="dfield"><label>Tipo</label>
           <select id="resType"><option value="resolucao">Resolução</option><option value="declaracao">Declaração</option><option value="recomendacao">Recomendação</option><option value="nota">Nota de Repúdio</option></select>
         </div>
-        <div class="dfield"><label>Título</label><input type="text" id="resTitle" placeholder="Ex: Situação dos direitos humanos na Venezuela"/></div>
-        <div class="dfield"><label>Considerandos</label><textarea id="resContext" placeholder="Contexto e motivos..."></textarea></div>
-        <div class="dfield"><label>Dispositivos</label><textarea id="resContent" placeholder="Medidas e recomendações propostas..."></textarea></div>
-        <button class="resbtn" id="resBtn" onclick="sendResolution()">📜 GERAR E PUBLICAR</button>
-        <button class="resbtn sec" onclick="clearResForm()">✕ Limpar</button>
+        <div class="dfield"><label>Título</label><input type="text" id="resTitle" placeholder="Ex: Situação dos direitos humanos na Venezuela" maxlength="200"/></div>
+        <div class="dfield"><label>Considerandos</label><textarea id="resContext" placeholder="Contexto e motivos..." maxlength="4000"></textarea></div>
+        <div class="dfield"><label>Dispositivos</label><textarea id="resContent" placeholder="Medidas e recomendações propostas..." maxlength="4000"></textarea></div>
+        <button class="resbtn" id="resBtn">📜 GERAR E PUBLICAR</button>
+        <button class="resbtn sec" id="resClearBtn">✕ Limpar</button>
       </div>
     </div>
     <div class="tabpanel" id="tab-vote">
@@ -217,11 +211,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
       <div class="np-wrap">
         <div class="np-controls">
           <div class="np-side-btns">
-            <button class="np-btn active" id="btnIntl" onclick="selectNP('intl')">🌐 Reuters/AP</button>
-            <button class="np-btn" id="btnRegional" onclick="selectNP('regional')">🌎 Agência Latino</button>
-            <button class="np-btn" id="btnOea" onclick="selectNP('oea')">🏛️ Boletim OEA</button>
+            <button class="np-btn active" id="btnIntl" data-np="intl">🌐 Reuters/AP</button>
+            <button class="np-btn" id="btnRegional" data-np="regional">🌎 Agência Latino</button>
+            <button class="np-btn" id="btnOea" data-np="oea">🏛️ Boletim OEA</button>
           </div>
-          <button class="np-gen-btn" id="npGenBtn" onclick="generateNewspaper()">⚡ GERAR EDIÇÃO</button>
+          <button class="np-gen-btn" id="npGenBtn">⚡ GERAR EDIÇÃO</button>
         </div>
         <div class="np-scroll" id="newspaperScroll">
           <div class="np-placeholder"><div style="font-size:28px">📰</div><div style="font-size:11px">Selecione o veículo e clique em Gerar</div></div>
@@ -283,11 +277,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
         <div class="irow"><span>Uruguai</span><span class="ival g">Referência</span></div>
       </div>
       <div class="icard"><h3>Ações Rápidas</h3>
-        <button class="actbtn" onclick="quick('Qual a posição do seu país sobre as violações de direitos humanos na Venezuela?')">🗣️ Posição sobre Venezuela</button>
-        <button class="actbtn" onclick="quick('Seu país apoia uma resolução de condenação à Nicarágua?')">📜 Condenar Nicarágua?</button>
-        <button class="actbtn" onclick="quick('Como fortalecer a CIDH diante da resistência de Estados membros?')">🤝 Fortalecer CIDH</button>
-        <button class="actbtn" onclick="quick('A soberania nacional deve limitar a atuação da OEA em DH?')">⚖️ Soberania vs DH</button>
-        <button class="actbtn" onclick="quick('Qual a solução para a crise humanitária no Haiti?')">🆘 Crise no Haiti</button>
+        <button class="actbtn" data-quick="Qual a posição do seu país sobre as violações de direitos humanos na Venezuela?">🗣️ Posição sobre Venezuela</button>
+        <button class="actbtn" data-quick="Seu país apoia uma resolução de condenação à Nicarágua?">📜 Condenar Nicarágua?</button>
+        <button class="actbtn" data-quick="Como fortalecer a CIDH diante da resistência de Estados membros?">🤝 Fortalecer CIDH</button>
+        <button class="actbtn" data-quick="A soberania nacional deve limitar a atuação da OEA em DH?">⚖️ Soberania vs DH</button>
+        <button class="actbtn" data-quick="Qual a solução para a crise humanitária no Haiti?">🆘 Crise no Haiti</button>
       </div>
     </div>
   </div>
@@ -295,67 +289,82 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, doc, setDoc, serverTimestamp, collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-const fb = initializeApp({apiKey:"AIzaSyDAebTSplrmE5n9evLmRvJFzgI3pxBW_sQ",authDomain:"oea-model-un.firebaseapp.com",projectId:"oea-model-un",storageBucket:"oea-model-un.firebasestorage.app",messagingSenderId:"791765339095",appId:"1:791765339095:web:acbf883113aa8ce2f49992"});
-const db = getFirestore(fb);
+import { getDatabase, ref, set, update, push, onDisconnect, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDAebTSplrmE5n9evLmRvJFzgI3pxBW_sQ",
+  authDomain: "oea-model-un.firebaseapp.com",
+  databaseURL: "https://oea-model-un-default-rtdb.firebaseio.com",
+  projectId: "oea-model-un",
+  storageBucket: "oea-model-un.firebasestorage.app",
+  messagingSenderId: "791765339095",
+  appId: "1:791765339095:web:acbf883113aa8ce2f49992"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 window._db = db;
-window._fbFns = { doc, setDoc, serverTimestamp, collection, addDoc };
+window._rtdb = { ref, set, update, push, onDisconnect, serverTimestamp };
 window._fbReady = true;
-document.getElementById('fbBadge').innerHTML = '<div class="fb-dot"></div><span>Monitorado pelo professor</span>';
+window.dispatchEvent(new Event('fbready'));
+document.getElementById('fbBadge').innerHTML = '';
+const dot = document.createElement('div'); dot.className = 'fb-dot';
+const span = document.createElement('span'); span.textContent = 'Monitorado pelo professor';
+document.getElementById('fbBadge').appendChild(dot);
+document.getElementById('fbBadge').appendChild(span);
 </script>
 
 <script>
-let API_KEY = localStorage.getItem('oea_api_key') || '';
-let studentName = '', studentCode = 'turma-geral';
-let cur = 'brasil', hist = [], currentNP = 'intl', votes = [];
+'use strict';
 
-function saveStudentName() {
-  const n = document.getElementById('studentNameInput').value.trim();
-  const c = document.getElementById('studentCodeInput').value.trim();
-  if (!n) { alert('Digite seu nome.'); return; }
-  studentName = n; studentCode = c || 'turma-geral';
-  localStorage.setItem('oea_student_name', n);
-  localStorage.setItem('oea_student_code', studentCode);
-  document.getElementById('modalName').classList.add('hidden');
-  document.getElementById('sideStudentName').textContent = n;
-  if (!API_KEY) document.getElementById('modalApi').classList.remove('hidden');
-  fbLog('entrou', { nome: n });
+// ─── ESTADO ───────────────────────────────────────────────
+// Limpa qualquer chave antiga deixada por versões anteriores deste app.
+try { localStorage.removeItem('oea_api_key'); } catch {}
+let studentName = '';
+let studentCode = '';
+let studentUid = localStorage.getItem('oea_student_uid') || '';
+let cur = 'brasil';
+let hist = [];
+let currentNP = 'intl';
+let votes = [];
+let lastSendAt = 0;
+
+// ─── HELPERS DE SEGURANÇA ─────────────────────────────────
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
-function saveApiKey() {
-  const k = document.getElementById('apiKeyInput').value.trim();
-  if (!k.startsWith('sk-ant-')) { alert('Chave inválida.'); return; }
-  API_KEY = k; localStorage.setItem('oea_api_key', k);
-  document.getElementById('modalApi').classList.add('hidden');
+function setMultiline(el, text) {
+  const s = String(text == null ? '' : text);
+  el.textContent = '';
+  const parts = s.split('\n');
+  parts.forEach((p, i) => {
+    el.appendChild(document.createTextNode(p));
+    if (i < parts.length - 1) el.appendChild(document.createElement('br'));
+  });
 }
 
-function checkInit() {
-  const n = localStorage.getItem('oea_student_name');
-  if (n) {
-    studentName = n; studentCode = localStorage.getItem('oea_student_code') || 'turma-geral';
-    document.getElementById('modalName').classList.add('hidden');
-    document.getElementById('sideStudentName').textContent = n;
-    if (!API_KEY) document.getElementById('modalApi').classList.remove('hidden');
-  }
+function genUid() {
+  const a = new Uint8Array(12);
+  crypto.getRandomValues(a);
+  return 'u_' + Array.from(a).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-async function fbLog(tipo, dados) {
-  if (!window._fbReady || !studentName) return;
-  try {
-    const { doc, setDoc, serverTimestamp, collection, addDoc } = window._fbFns;
-    const db = window._db;
-    await addDoc(collection(db, 'sessoes', studentCode, 'atividades'), { tipo, aluno: studentName, turma: studentCode, pais: cur, timestamp: serverTimestamp(), ...dados });
-    await setDoc(doc(db, 'sessoes', studentCode, 'alunos', studentName.replace(/\s+/g,'_')), { nome: studentName, pais_atual: cur, ultima_atividade: tipo, timestamp: serverTimestamp() }, { merge: true });
-  } catch(e) { console.warn('FB:', e.message); }
+function normRoom(c) {
+  return String(c || '').trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '').slice(0, 32);
 }
 
-async function callClaude(sys, msgs, max) {
-  const r = await fetch('https://api.anthropic.com/v1/messages', { method:'POST', headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','x-api-key':API_KEY,'anthropic-dangerous-direct-browser-access':'true'}, body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:max||800,system:sys,messages:msgs}) });
-  if (!r.ok) { const e = await r.text(); throw new Error('API '+r.status+': '+e.substring(0,80)); }
-  const d = await r.json();
-  return d.content?.map(c=>c.text||'').join('')||'';
+function whenFbReady(fn) {
+  if (window._fbReady) fn();
+  else window.addEventListener('fbready', fn, { once: true });
 }
 
+// ─── DELEGADOS ────────────────────────────────────────────
 const DELEGATES = [
   {id:'usa',name:'Estados Unidos',flag:'🇺🇸',region:'América do Norte',persona:'Você representa os Estados Unidos na OEA. Defenda democracia e DH nas Américas, critique Venezuela e Nicarágua.'},
   {id:'canada',name:'Canadá',flag:'🇨🇦',region:'América do Norte',persona:'Você representa o Canadá na OEA. Forte defensor multilateral de DH, apoiador da CIDH.'},
@@ -383,209 +392,687 @@ const DELEGATES = [
   {id:'uruguay',name:'Uruguai',flag:'🇺🇾',region:'América do Sul',persona:'Você representa o Uruguai na OEA. Referência regional em democracia e DH.'}
 ];
 
+// ─── MODAL: NOME ──────────────────────────────────────────
+function saveStudentName() {
+  const n = document.getElementById('studentNameInput').value.trim().slice(0, 80);
+  const cRaw = document.getElementById('studentCodeInput').value.trim();
+  const c = normRoom(cRaw) || 'TURMA-GERAL';
+  if (!n) { alert('Digite seu nome.'); return; }
+
+  studentName = n;
+  studentCode = c;
+  if (!studentUid) {
+    studentUid = genUid();
+    localStorage.setItem('oea_student_uid', studentUid);
+  }
+  localStorage.setItem('oea_student_name', n);
+  localStorage.setItem('oea_student_code', c);
+
+  document.getElementById('modalName').classList.add('hidden');
+  document.getElementById('sideStudentName').textContent = n;
+
+  whenFbReady(() => {
+    upsertPlayer({ name: n, online: true, joinedAt: window._rtdb.serverTimestamp() });
+    setupOnDisconnect();
+  });
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+function checkInit() {
+  const n = localStorage.getItem('oea_student_name');
+  if (n) {
+    studentName = n;
+    studentCode = normRoom(localStorage.getItem('oea_student_code')) || 'TURMA-GERAL';
+    if (!studentUid) {
+      studentUid = genUid();
+      localStorage.setItem('oea_student_uid', studentUid);
+    }
+    document.getElementById('modalName').classList.add('hidden');
+    document.getElementById('sideStudentName').textContent = n;
+    whenFbReady(() => {
+      upsertPlayer({ name: n, online: true, joinedAt: window._rtdb.serverTimestamp() });
+      setupOnDisconnect();
+    });
+  }
+}
+
+// ─── REALTIME DATABASE ────────────────────────────────────
+function playerRef() {
+  if (!window._fbReady || !studentCode || !studentUid) return null;
+  return window._rtdb.ref(window._db, 'oea_rooms/' + studentCode + '/players/' + studentUid);
+}
+
+function upsertPlayer(patch) {
+  const r = playerRef();
+  if (!r) return;
+  window._rtdb.update(r, patch).catch(e => console.warn('FB upsert:', e.message));
+}
+
+function setupOnDisconnect() {
+  const r = playerRef();
+  if (!r) return;
+  try {
+    window._rtdb.onDisconnect(r).update({ online: false });
+  } catch (e) { console.warn('FB onDisconnect:', e.message); }
+}
+
+function logChat(payload) {
+  if (!window._fbReady || !studentCode) return;
+  try {
+    const r = window._rtdb.ref(window._db, 'oea_rooms/' + studentCode + '/chat');
+    window._rtdb.push(r, { ...payload, ts: window._rtdb.serverTimestamp() })
+      .catch(e => console.warn('FB chat:', e.message));
+  } catch (e) { console.warn('FB chat:', e.message); }
+}
+
+function logVote(payload) {
+  if (!window._fbReady || !studentCode) return;
+  try {
+    const r = window._rtdb.ref(window._db, 'oea_rooms/' + studentCode + '/votes');
+    window._rtdb.push(r, { ...payload, ts: window._rtdb.serverTimestamp() })
+      .catch(e => console.warn('FB vote:', e.message));
+  } catch (e) { console.warn('FB vote:', e.message); }
+}
+
+// ─── CHAMADA AO PROXY ─────────────────────────────────────
+// A chave da Anthropic vive numa env var no Netlify; a Function em
+// /.netlify/functions/claude faz a chamada real. Em desenvolvimento local,
+// use `netlify dev` para subir essa rota.
+async function callClaude(sys, msgs, max) {
+  const r = await fetch('/.netlify/functions/claude', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      max_tokens: max || 800,
+      system: sys,
+      messages: msgs
+    })
+  });
+  if (!r.ok) {
+    let detail = '';
+    try {
+      const j = await r.json();
+      detail = j.error || j.detail || '';
+    } catch {
+      detail = (await r.text()).substring(0, 80);
+    }
+    throw new Error('Proxy ' + r.status + (detail ? ': ' + detail : ''));
+  }
+  const d = await r.json();
+  return d.content?.map(c => c.text || '').join('') || '';
+}
+
+// ─── DELEGADOS UI ─────────────────────────────────────────
 function renderDelegates() {
-  const list = document.getElementById('delegateList'); list.innerHTML = '';
+  const list = document.getElementById('delegateList');
+  list.innerHTML = '';
   const regions = [...new Set(DELEGATES.map(d => d.region))];
   regions.forEach(region => {
-    const rdiv = document.createElement('div'); rdiv.className = 'region-div'; rdiv.textContent = '— ' + region + ' —'; list.appendChild(rdiv);
+    const rdiv = document.createElement('div');
+    rdiv.className = 'region-div';
+    rdiv.textContent = '— ' + region + ' —';
+    list.appendChild(rdiv);
+
     DELEGATES.filter(d => d.region === region).forEach(d => {
       const btn = document.createElement('button');
-      btn.className = 'dbtn' + (d.id === cur ? ' active' : ''); btn.dataset.id = d.id;
-      btn.innerHTML = '<span class="dflag">' + d.flag + '</span><div><div class="dname">' + d.name + '</div><div class="drole">' + d.region + '</div></div>';
+      btn.className = 'dbtn' + (d.id === cur ? ' active' : '');
+      btn.dataset.id = d.id;
+
+      const flagSpan = document.createElement('span');
+      flagSpan.className = 'dflag';
+      flagSpan.textContent = d.flag;
+
+      const wrap = document.createElement('div');
+      const nameDiv = document.createElement('div');
+      nameDiv.className = 'dname';
+      nameDiv.textContent = d.name;
+      const roleDiv = document.createElement('div');
+      roleDiv.className = 'drole';
+      roleDiv.textContent = d.region;
+      wrap.appendChild(nameDiv); wrap.appendChild(roleDiv);
+
+      btn.appendChild(flagSpan); btn.appendChild(wrap);
       btn.addEventListener('click', () => {
         document.querySelectorAll('.dbtn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active'); cur = d.id; hist = [];
+        btn.classList.add('active');
+        cur = d.id;
+        hist = [];
         document.getElementById('hdrPlayer').textContent = d.flag + ' ' + d.name;
-        addMsg('system','','','🌎 Você agora representa <strong>' + d.name + '</strong>.');
-        fbLog('escolheu_pais', { pais_escolhido: d.name });
+        addSystem('🌎 Você agora representa ', { strong: d.name }, '.');
+        upsertPlayer({ charId: d.id, charName: d.name, flag: d.flag, region: d.region });
       });
       list.appendChild(btn);
     });
   });
 }
 
-function addMsg(role, flag, name, text) {
+// ─── MENSAGENS (DOM-SAFE) ────────────────────────────────
+function addSystem(...parts) {
   const log = document.getElementById('chatLog');
   const d = document.createElement('div');
-  if (role==='system') { d.className='msg system'; d.innerHTML='<div class="mtext">'+text+'</div>'; }
-  else if (role==='user') { d.className='msg user'; d.innerHTML='<div class="mhdr">📨 '+studentName+' · '+name+'</div><div class="mtext">'+text+'</div>'; }
-  else { d.className='msg ai'; d.innerHTML='<div class="mhdr"><span>'+flag+'</span> Delegação de '+name+'</div><div class="mtext">'+text+'</div>'; }
-  log.appendChild(d); log.scrollTop = log.scrollHeight;
+  d.className = 'msg system';
+  const m = document.createElement('div');
+  m.className = 'mtext';
+  parts.forEach(p => {
+    if (typeof p === 'string') m.appendChild(document.createTextNode(p));
+    else if (p && p.strong) {
+      const s = document.createElement('strong'); s.textContent = p.strong; m.appendChild(s);
+    } else if (p && p.em) {
+      const e = document.createElement('em'); e.textContent = p.em; m.appendChild(e);
+    }
+  });
+  d.appendChild(m);
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
 }
 
+function addUserMsg(flag, charName, text) {
+  const log = document.getElementById('chatLog');
+  const d = document.createElement('div');
+  d.className = 'msg user';
+  const h = document.createElement('div');
+  h.className = 'mhdr';
+  h.textContent = '📨 ' + studentName + ' · ' + charName;
+  const m = document.createElement('div');
+  m.className = 'mtext';
+  setMultiline(m, text);
+  d.appendChild(h); d.appendChild(m);
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+}
+
+function addAiMsg(flag, charName, text) {
+  const log = document.getElementById('chatLog');
+  const d = document.createElement('div');
+  d.className = 'msg ai';
+  const h = document.createElement('div');
+  h.className = 'mhdr';
+  const flagSpan = document.createElement('span');
+  flagSpan.textContent = flag;
+  h.appendChild(flagSpan);
+  h.appendChild(document.createTextNode(' Delegação de ' + charName));
+  const m = document.createElement('div');
+  m.className = 'mtext';
+  setMultiline(m, text);
+  d.appendChild(h); d.appendChild(m);
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+}
+
+// ─── ENVIO ────────────────────────────────────────────────
 async function send() {
-  const inp = document.getElementById('inp'); const t = inp.value.trim(); if (!t) return;
+  const now = Date.now();
+  if (now - lastSendAt < 800) return;
+  lastSendAt = now;
+
+  const inp = document.getElementById('inp');
+  const t = inp.value.trim().slice(0, 2000);
+  if (!t) return;
+
   const del = DELEGATES.find(d => d.id === cur);
-  const btn = document.getElementById('sbtn'); btn.disabled = true; inp.value = '';
-  addMsg('user', del.flag, del.name, t); hist.push({role:'user',content:t});
-  fbLog('mensagem', { texto: t, pais: del.name });
-  const typ = document.getElementById('typing'); typ.textContent = 'Delegação de ' + del.name + ' redigindo...'; typ.classList.add('on');
+  const btn = document.getElementById('sbtn');
+  btn.disabled = true;
+  inp.value = '';
+
+  addUserMsg(del.flag, del.name, t);
+  hist.push({ role: 'user', content: t });
+
+  logChat({
+    type: 'chat',
+    uid: studentUid,
+    senderName: studentName,
+    charName: del.name,
+    flag: del.flag,
+    text: t.substring(0, 1500)
+  });
+
+  const typ = document.getElementById('typing');
+  typ.textContent = 'Delegação de ' + del.name + ' redigindo...';
+  typ.classList.add('on');
+
   const sys = del.persona + ' Você é o(a) representante de ' + del.name + ' na 55ª Assembleia Geral da OEA. Tema: "A situação da América Latina diante do descaso com os direitos humanos". Responda em português brasileiro com linguagem diplomática formal, 2-3 parágrafos.';
   try {
     const reply = await callClaude(sys, hist, 900);
-    hist.push({role:'assistant',content:reply}); typ.classList.remove('on');
-    addMsg('ai', del.flag, del.name, reply.replace(/\n/g,'<br>'));
-    fbLog('resposta_ia', { pergunta: t, resposta: reply.substring(0,500), pais: del.name });
-  } catch(e) { typ.classList.remove('on'); addMsg('system','','','Erro: '+e.message); }
-  btn.disabled = false; inp.focus();
+    hist.push({ role: 'assistant', content: reply });
+    typ.classList.remove('on');
+    addAiMsg(del.flag, del.name, reply);
+  } catch (e) {
+    typ.classList.remove('on');
+    addSystem('Erro: ' + e.message);
+  }
+  btn.disabled = false;
+  inp.focus();
 }
 
-window.quick = function(t) { document.getElementById('inp').value = t; switchTab('chat'); send(); };
+function quick(t) {
+  document.getElementById('inp').value = t;
+  switchTab('chat');
+  send();
+}
 
+// ─── RESOLUÇÃO ────────────────────────────────────────────
 async function sendResolution() {
-  const title = document.getElementById('resTitle').value.trim();
-  const context = document.getElementById('resContext').value.trim();
-  const content = document.getElementById('resContent').value.trim();
+  const title = document.getElementById('resTitle').value.trim().slice(0, 200);
+  const context = document.getElementById('resContext').value.trim().slice(0, 4000);
+  const content = document.getElementById('resContent').value.trim().slice(0, 4000);
   const tipo = document.getElementById('resType').value;
-  if (!title||!context||!content) { alert('Preencha todos os campos.'); return; }
-  const btn = document.getElementById('resBtn'); btn.disabled = true; btn.textContent = '⏳ GERANDO...';
+  if (!title || !context || !content) { alert('Preencha todos os campos.'); return; }
+
+  const btn = document.getElementById('resBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ GERANDO...';
+
   const del = DELEGATES.find(d => d.id === cur);
-  const tipoLabel = {resolucao:'RESOLUÇÃO',declaracao:'DECLARAÇÃO',recomendacao:'RECOMENDAÇÃO',nota:'NOTA DE REPÚDIO'}[tipo];
+  const tipoLabel = { resolucao: 'RESOLUÇÃO', declaracao: 'DECLARAÇÃO', recomendacao: 'RECOMENDAÇÃO', nota: 'NOTA DE REPÚDIO' }[tipo] || 'RESOLUÇÃO';
+
   try {
-    const text = await callClaude('Especialista em diplomacia da OEA. Formate documentos oficiais em português brasileiro com linguagem formal. Inclua: protocolo fictício, data, considerandos (CONSIDERANDO QUE...), dispositivos (RESOLVE/DECLARA...) e assinatura.',
-      [{role:'user',content:'TIPO: '+tipoLabel+'\nPROPONENTE: '+del.name+'\nTÍTULO: '+title+'\nCONTEXTO: '+context+'\nDISPOSITIVOS: '+content}], 1000);
-    const resObj = {id:'res_'+Date.now(),tipoLabel,title,text,proposedBy:del.name,flag:del.flag};
+    const text = await callClaude(
+      'Especialista em diplomacia da OEA. Formate documentos oficiais em português brasileiro com linguagem formal. Inclua: protocolo fictício, data, considerandos (CONSIDERANDO QUE...), dispositivos (RESOLVE/DECLARA...) e assinatura.',
+      [{ role: 'user', content: 'TIPO: ' + tipoLabel + '\nPROPONENTE: ' + del.name + '\nTÍTULO: ' + title + '\nCONTEXTO: ' + context + '\nDISPOSITIVOS: ' + content }],
+      1000
+    );
+
+    const resObj = { id: 'res_' + Date.now(), tipoLabel, title, text, proposedBy: del.name, flag: del.flag };
     votes.push(resObj);
-    fbLog('resolucao', { titulo: title, tipo: tipoLabel, texto: text.substring(0,800), pais: del.name });
-    const log = document.getElementById('chatLog');
-    const div = document.createElement('div'); div.className = 'msg resolution';
-    div.innerHTML = '<div class="mhdr-res">📜 '+tipoLabel+' — '+title+'</div><div class="mtext" style="font-family:Georgia,serif;font-size:11px;line-height:1.8">'+text.replace(/\n/g,'<br>')+'</div><div style="margin-top:8px;font-size:9px;color:var(--muted)">Proposta por: '+del.flag+' '+del.name+' · <button onclick="simulateVote(\''+resObj.id+'\')" style="background:var(--blue2);color:white;border:none;padding:3px 10px;border-radius:3px;cursor:pointer;font-size:9px;font-weight:700">🗳️ SIMULAR VOTAÇÃO</button></div>';
-    log.appendChild(div); log.scrollTop = log.scrollHeight;
-    switchTab('chat'); clearResForm();
-  } catch(e) { alert('Erro: '+e.message); }
-  btn.disabled = false; btn.textContent = '📜 GERAR E PUBLICAR';
+
+    logChat({
+      type: 'resolution',
+      uid: studentUid,
+      senderName: studentName,
+      charName: del.name,
+      flag: del.flag,
+      resType: tipoLabel,
+      resTitle: title,
+      text: text.substring(0, 1500)
+    });
+
+    renderResolution(resObj);
+    switchTab('chat');
+    clearResForm();
+  } catch (e) {
+    alert('Erro: ' + e.message);
+  }
+  btn.disabled = false;
+  btn.textContent = '📜 GERAR E PUBLICAR';
 }
 
-window.clearResForm = function() { document.getElementById('resTitle').value=''; document.getElementById('resContext').value=''; document.getElementById('resContent').value=''; };
+function renderResolution(resObj) {
+  const log = document.getElementById('chatLog');
+  const div = document.createElement('div');
+  div.className = 'msg resolution';
 
-window.simulateVote = async function(resId) {
-  const res = votes.find(v => v.id === resId); if (!res) return;
+  const h = document.createElement('div');
+  h.className = 'mhdr-res';
+  h.textContent = '📜 ' + resObj.tipoLabel + ' — ' + resObj.title;
+
+  const m = document.createElement('div');
+  m.className = 'mtext diplo';
+  setMultiline(m, resObj.text);
+
+  const foot = document.createElement('div');
+  foot.style.cssText = 'margin-top:8px;font-size:9px;color:var(--muted)';
+  foot.appendChild(document.createTextNode('Proposta por: ' + resObj.flag + ' ' + resObj.proposedBy + ' · '));
+
+  const voteBtn = document.createElement('button');
+  voteBtn.style.cssText = 'background:var(--blue2);color:white;border:none;padding:3px 10px;border-radius:3px;cursor:pointer;font-size:9px;font-weight:700';
+  voteBtn.textContent = '🗳️ SIMULAR VOTAÇÃO';
+  voteBtn.addEventListener('click', () => simulateVote(resObj.id));
+  foot.appendChild(voteBtn);
+
+  div.appendChild(h); div.appendChild(m); div.appendChild(foot);
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
+
+function clearResForm() {
+  document.getElementById('resTitle').value = '';
+  document.getElementById('resContext').value = '';
+  document.getElementById('resContent').value = '';
+}
+
+// ─── VOTAÇÃO ──────────────────────────────────────────────
+async function simulateVote(resId) {
+  const res = votes.find(v => v.id === resId);
+  if (!res) return;
+
   switchTab('vote');
   const vlog = document.getElementById('voteLog');
-  const loading = document.createElement('div'); loading.className = 'msg system';
-  loading.innerHTML = '<div class="mtext">⏳ Simulando votação sobre <em>"'+res.title+'"</em>...</div>';
+  const loading = document.createElement('div');
+  loading.className = 'msg system';
+  const lm = document.createElement('div'); lm.className = 'mtext';
+  lm.appendChild(document.createTextNode('⏳ Simulando votação sobre '));
+  const em = document.createElement('em'); em.textContent = '"' + res.title + '"'; lm.appendChild(em);
+  lm.appendChild(document.createTextNode('...'));
+  loading.appendChild(lm);
   vlog.appendChild(loading);
+
   try {
-    const raw = await callClaude('Especialista em política externa latino-americana. Simule como os países da OEA votariam. Retorne SOMENTE JSON sem markdown: {"favor":["País A"],"contra":["País C"],"abstencao":["País D"],"analise":"2 frases"}',
-      [{role:'user',content:'Simule votação OEA:\nTIPO: '+res.tipoLabel+'\nTÍTULO: '+res.title+'\nPROPONENTE: '+res.proposedBy}], 700);
-    let result = {favor:[],contra:[],abstencao:[],analise:''};
-    try { result = JSON.parse(raw.replace(/```json|```/g,'').trim()); } catch(e) {}
+    const raw = await callClaude(
+      'Especialista em política externa latino-americana. Simule como os países da OEA votariam. Retorne SOMENTE JSON sem markdown: {"favor":["País A"],"contra":["País C"],"abstencao":["País D"],"analise":"2 frases"}',
+      [{ role: 'user', content: 'Simule votação OEA:\nTIPO: ' + res.tipoLabel + '\nTÍTULO: ' + res.title + '\nPROPONENTE: ' + res.proposedBy }],
+      700
+    );
+    let result = { favor: [], contra: [], abstencao: [], analise: '' };
+    try {
+      const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
+      result.favor = Array.isArray(parsed.favor) ? parsed.favor.map(String) : [];
+      result.contra = Array.isArray(parsed.contra) ? parsed.contra.map(String) : [];
+      result.abstencao = Array.isArray(parsed.abstencao) ? parsed.abstencao.map(String) : [];
+      result.analise = typeof parsed.analise === 'string' ? parsed.analise : '';
+    } catch (e) { /* ignora, usa default */ }
+
     loading.remove();
-    fbLog('votacao', { titulo: res.title, favor: result.favor?.length||0, contra: result.contra?.length||0, aprovado: (result.favor?.length||0)>(result.contra?.length||0) });
-    const approved = (result.favor?.length||0) > (result.contra?.length||0);
-    const div = document.createElement('div'); div.className = 'msg vote-msg';
-    div.innerHTML = '<div class="mhdr-vote">🗳️ RESULTADO — '+res.tipoLabel+'</div>'
-      +'<div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:7px">'+res.title+'</div>'
-      +'<div style="display:flex;flex-direction:column;gap:5px;font-size:10px">'
-      +'<div><span style="color:var(--green2);font-weight:700">✅ A Favor ('+(result.favor?.length||0)+'):</span> '+(result.favor||[]).join(', ')+'</div>'
-      +'<div><span style="color:var(--red);font-weight:700">❌ Contra ('+(result.contra?.length||0)+'):</span> '+(result.contra||[]).join(', ')+'</div>'
-      +'<div><span style="color:var(--muted);font-weight:700">⬜ Abstenção ('+(result.abstencao?.length||0)+'):</span> '+(result.abstencao||[]).join(', ')+'</div>'
-      +'</div><div style="margin-top:9px;padding:7px;background:var(--surface2);border-radius:3px;font-size:10px;color:var(--muted);line-height:1.6;border-left:3px solid var(--blue3)"><strong style="color:var(--blue2)">📊 Análise:</strong> '+(result.analise||'')+'</div>'
-      +'<div style="margin-top:7px;font-size:11px;font-weight:700;color:'+(approved?'var(--green2)':'var(--red)')+'">'+( approved?'✅ RESOLUÇÃO APROVADA':'❌ RESOLUÇÃO REJEITADA')+'</div>';
-    vlog.appendChild(div); vlog.scrollTop = vlog.scrollHeight;
-  } catch(e) { loading.remove(); const err=document.createElement('div'); err.className='msg system'; err.innerHTML='<div class="mtext">Erro: '+e.message+'</div>'; vlog.appendChild(err); }
-};
+    const approved = result.favor.length > result.contra.length;
 
-window.selectNP = function(type) {
-  currentNP = type;
-  document.getElementById('btnIntl').classList.toggle('active', type==='intl');
-  document.getElementById('btnRegional').classList.toggle('active', type==='regional');
-  document.getElementById('btnOea').classList.toggle('active', type==='oea');
-};
+    logVote({
+      id: res.id,
+      resTitle: res.title,
+      resType: res.tipoLabel,
+      proposedBy: res.proposedBy,
+      flag: res.flag,
+      results: {
+        favor: result.favor.length,
+        contra: result.contra.length,
+        abstencao: result.abstencao.length
+      },
+      voters: {},
+      approved
+    });
 
-window.generateNewspaper = async function() {
-  const btn = document.getElementById('npGenBtn'); btn.disabled = true;
-  const scroll = document.getElementById('newspaperScroll');
-  scroll.innerHTML = '<div class="np-loading">⏳ Redigindo edição...</div>';
-  const papers = {
-    intl:{name:'Reuters / Associated Press',sub:'INTERNATIONAL WIRE SERVICE · LATIN AMERICA DESK',style:'agência internacional neutra e factual'},
-    regional:{name:'Agência Latino-Americana de Notícias',sub:'COBERTURA REGIONAL · DIREITOS HUMANOS',style:'agência regional comprometida com direitos humanos'},
-    oea:{name:'Boletim Oficial da OEA',sub:'ORGANIZAÇÃO DOS ESTADOS AMERICANOS · SECRETARIA GERAL',style:'boletim oficial diplomático da OEA'}
-  };
-  const paper = papers[currentNP];
-  let np = {};
-  try {
-    const raw = await callClaude('Você é editor-chefe de '+paper.name+'. Redija em português brasileiro no estilo de '+paper.style+' sobre o debate da OEA sobre DH na América Latina. Retorne SOMENTE JSON sem markdown: {"manchete":"MANCHETE","subtitulo":"subtítulo","artigo":"par1\\n\\npar2","manchete2":"2ª MANCHETE","noticia2":"parágrafo","manchete3":"3ª MANCHETE","noticia3":"parágrafo","destaque":"FRASE","destaque_sub":"contexto","editorial":"análise"}',
-      [{role:'user',content:'OEA 2025: DH na América Latina. Foco: Venezuela, Haiti, Nicarágua, Cuba. Instrumentos: CIDH, Corte IDH, Carta Democrática.'}], 1000);
-    np = JSON.parse(raw.replace(/```json|```/g,'').trim());
-  } catch(e) { scroll.innerHTML='<div class="np-loading">Erro: '+e.message+'</div>'; btn.disabled=false; return; }
-  fbLog('jornal', { veiculo: paper.name, manchete: np.manchete });
-  const today = new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
-  scroll.innerHTML = '';
-  const edDiv = document.createElement('div');
-  edDiv.innerHTML = '<div class="np-edition">'
-    +'<div class="np-hdr"><div class="np-hdr-top"><span>EDIÇÃO ESPECIAL · OEA 2025</span><span>'+today.toUpperCase()+'</span><span>EM SESSÃO</span></div>'
-    +'<div class="np-masthead">'+paper.name+'</div><div class="np-subhead">'+paper.sub+'</div>'
-    +'<div class="np-dateline"><span>COBERTURA ESPECIAL · DIREITOS HUMANOS NA AMÉRICA LATINA</span><span>Washington D.C.</span></div></div>'
-    +'<div class="np-body">'
-    +'<div class="np-main"><div class="np-headline">'+(np.manchete||'')+'</div><div class="np-byline">Correspondente especial · '+today+'</div>'
-    +'<div class="np-article">'+(np.artigo||'').replace(/\n\n/g,'<br><br>')+'</div>'
-    +'<div style="font-size:8px;font-style:italic;color:var(--muted);margin-top:4px">'+(np.subtitulo||'')+'</div></div>'
-    +'<div class="np-side"><div class="np-side-head">'+(np.manchete2||'')+'</div><div class="np-side-text">'+(np.noticia2||'')+'</div></div>'
-    +'<div class="np-side"><div class="np-side-head">'+(np.manchete3||'')+'</div><div class="np-side-text">'+(np.noticia3||'')+'</div>'
-    +'<div style="margin-top:7px;font-size:8px;font-weight:700;color:var(--blue2);text-transform:uppercase">Análise</div>'
-    +'<div class="np-side-text" style="font-style:italic">'+(np.editorial||'')+'</div></div>'
-    +'<div class="np-prop"><div class="np-prop-text">'+(np.destaque||'')+'</div><div class="np-prop-sub">'+(np.destaque_sub||'')+'</div></div>'
-    +'</div><div class="np-footer"><span>'+paper.name+'</span><span>Simulação educacional · OEA Model UN</span><span>'+today+'</span></div></div>';
-  scroll.appendChild(edDiv);
-  const pdfDiv = document.createElement('div'); pdfDiv.style.cssText='text-align:center;padding:12px 0 8px;';
-  const pdfBtn = document.createElement('button'); pdfBtn.style.cssText='background:var(--blue2);color:#fff;border:none;padding:8px 20px;border-radius:3px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;';
-  pdfBtn.textContent='📄 EXPORTAR EM PDF'; pdfBtn.onclick=function(){exportPDF(np,paper,today);};
-  pdfDiv.appendChild(pdfBtn); scroll.appendChild(pdfDiv);
-  btn.disabled = false;
-};
-
-function exportPDF(np, paper, today) {
-  const {jsPDF} = window.jspdf;
-  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  const margin=18,pageW=210,cW=pageW-margin*2; let y=18;
-  function addText(text,size,color,bold){
-    doc.setFontSize(size);doc.setTextColor(...(color||[26,42,58]));doc.setFont('helvetica',bold?'bold':'normal');
-    const clean=(text||'').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&');
-    doc.splitTextToSize(clean,cW).forEach(l=>{if(y>278){doc.addPage();y=18;}doc.text(l,margin,y);y+=size*0.45;});y+=2;
+    renderVoteResult(res, result, approved);
+  } catch (e) {
+    loading.remove();
+    const err = document.createElement('div');
+    err.className = 'msg system';
+    const em2 = document.createElement('div'); em2.className = 'mtext';
+    em2.textContent = 'Erro: ' + e.message;
+    err.appendChild(em2);
+    vlog.appendChild(err);
   }
-  doc.setFillColor(26,58,107);doc.rect(0,0,210,28,'F');
-  doc.setFontSize(7);doc.setTextColor(200,200,200);doc.setFont('helvetica','normal');doc.text('EDIÇÃO ESPECIAL · OEA 2025 · '+today.toUpperCase(),margin,8);
-  doc.setFontSize(14);doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.text(paper.name,margin,17);
-  doc.setFontSize(7);doc.setTextColor(180,200,220);doc.setFont('helvetica','normal');doc.text(paper.sub,margin,23);
-  y=36;
-  doc.setDrawColor(200,150,10);doc.setLineWidth(0.8);doc.line(margin,y,pageW-margin,y);y+=6;
-  addText(np.manchete||'',15,[26,58,107],true);
-  addText('Correspondente especial · '+today+(np.subtitulo?' — '+np.subtitulo:''),8,[100,120,140],false);
-  doc.setDrawColor(197,213,232);doc.setLineWidth(0.3);doc.line(margin,y,pageW-margin,y);y+=4;
-  addText(np.artigo||'',10,[26,42,58],false);y+=3;
-  doc.setDrawColor(197,213,232);doc.line(margin,y,pageW-margin,y);y+=4;
-  addText(np.manchete2||'',12,[26,58,107],true);addText(np.noticia2||'',10,[26,42,58],false);y+=3;
-  doc.setDrawColor(197,213,232);doc.line(margin,y,pageW-margin,y);y+=4;
-  addText(np.manchete3||'',12,[26,58,107],true);addText(np.noticia3||'',10,[26,42,58],false);y+=3;
-  doc.setDrawColor(197,213,232);doc.line(margin,y,pageW-margin,y);y+=4;
-  addText('ANÁLISE EDITORIAL',8,[42,82,152],true);addText(np.editorial||'',10,[26,42,58],false);y+=4;
-  if(y>262){doc.addPage();y=18;}
-  doc.setFillColor(26,58,107);doc.rect(margin,y,cW,18,'F');
-  doc.setFontSize(10);doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');
-  doc.text(doc.splitTextToSize((np.destaque||'').toUpperCase(),cW-8),margin+4,y+7);
-  doc.setFontSize(8);doc.setTextColor(180,200,220);doc.setFont('helvetica','normal');doc.text(np.destaque_sub||'',margin+4,y+15);
-  doc.setFontSize(7);doc.setTextColor(140,160,180);doc.text(paper.name+' · Simulação educacional · OEA Model UN · '+today,margin,290);
-  doc.save(paper.name.replace(/[\s/]/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.pdf');
 }
 
+function renderVoteResult(res, result, approved) {
+  const vlog = document.getElementById('voteLog');
+  const div = document.createElement('div');
+  div.className = 'msg vote-msg';
+
+  const h = document.createElement('div');
+  h.className = 'mhdr-vote';
+  h.textContent = '🗳️ RESULTADO — ' + res.tipoLabel;
+
+  const title = document.createElement('div');
+  title.style.cssText = 'font-size:12px;font-weight:700;color:var(--blue);margin-bottom:7px';
+  title.textContent = res.title;
+
+  const lists = document.createElement('div');
+  lists.style.cssText = 'display:flex;flex-direction:column;gap:5px;font-size:10px';
+
+  function row(label, color, items) {
+    const r = document.createElement('div');
+    const sp = document.createElement('span');
+    sp.style.cssText = 'color:' + color + ';font-weight:700';
+    sp.textContent = label + ' (' + items.length + '):';
+    r.appendChild(sp);
+    r.appendChild(document.createTextNode(' ' + items.join(', ')));
+    return r;
+  }
+  lists.appendChild(row('✅ A Favor', 'var(--green2)', result.favor));
+  lists.appendChild(row('❌ Contra', 'var(--red)', result.contra));
+  lists.appendChild(row('⬜ Abstenção', 'var(--muted)', result.abstencao));
+
+  const ana = document.createElement('div');
+  ana.style.cssText = 'margin-top:9px;padding:7px;background:var(--surface2);border-radius:3px;font-size:10px;color:var(--muted);line-height:1.6;border-left:3px solid var(--blue3)';
+  const anaLabel = document.createElement('strong');
+  anaLabel.style.color = 'var(--blue2)';
+  anaLabel.textContent = '📊 Análise: ';
+  ana.appendChild(anaLabel);
+  ana.appendChild(document.createTextNode(result.analise || ''));
+
+  const verdict = document.createElement('div');
+  verdict.style.cssText = 'margin-top:7px;font-size:11px;font-weight:700;color:' + (approved ? 'var(--green2)' : 'var(--red)');
+  verdict.textContent = approved ? '✅ RESOLUÇÃO APROVADA' : '❌ RESOLUÇÃO REJEITADA';
+
+  div.appendChild(h);
+  div.appendChild(title);
+  div.appendChild(lists);
+  div.appendChild(ana);
+  div.appendChild(verdict);
+  vlog.appendChild(div);
+  vlog.scrollTop = vlog.scrollHeight;
+}
+
+// ─── JORNAL ───────────────────────────────────────────────
+function selectNP(type) {
+  currentNP = type;
+  document.getElementById('btnIntl').classList.toggle('active', type === 'intl');
+  document.getElementById('btnRegional').classList.toggle('active', type === 'regional');
+  document.getElementById('btnOea').classList.toggle('active', type === 'oea');
+}
+
+async function generateNewspaper() {
+  const btn = document.getElementById('npGenBtn');
+  btn.disabled = true;
+  const scroll = document.getElementById('newspaperScroll');
+  scroll.innerHTML = '';
+  const loading = document.createElement('div'); loading.className = 'np-loading';
+  loading.textContent = '⏳ Redigindo edição...';
+  scroll.appendChild(loading);
+
+  const papers = {
+    intl: { name: 'Reuters / Associated Press', sub: 'INTERNATIONAL WIRE SERVICE · LATIN AMERICA DESK', style: 'agência internacional neutra e factual' },
+    regional: { name: 'Agência Latino-Americana de Notícias', sub: 'COBERTURA REGIONAL · DIREITOS HUMANOS', style: 'agência regional comprometida com direitos humanos' },
+    oea: { name: 'Boletim Oficial da OEA', sub: 'ORGANIZAÇÃO DOS ESTADOS AMERICANOS · SECRETARIA GERAL', style: 'boletim oficial diplomático da OEA' }
+  };
+  const paper = papers[currentNP];
+
+  let np = {};
+  try {
+    const raw = await callClaude(
+      'Você é editor-chefe de ' + paper.name + '. Redija em português brasileiro no estilo de ' + paper.style + ' sobre o debate da OEA sobre DH na América Latina. Retorne SOMENTE JSON sem markdown: {"manchete":"MANCHETE","subtitulo":"subtítulo","artigo":"par1\\n\\npar2","manchete2":"2ª MANCHETE","noticia2":"parágrafo","manchete3":"3ª MANCHETE","noticia3":"parágrafo","destaque":"FRASE","destaque_sub":"contexto","editorial":"análise"}',
+      [{ role: 'user', content: 'OEA 2025: DH na América Latina. Foco: Venezuela, Haiti, Nicarágua, Cuba. Instrumentos: CIDH, Corte IDH, Carta Democrática.' }],
+      1000
+    );
+    const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
+    // Coerção a strings — defesa contra payloads inesperados
+    ['manchete','subtitulo','artigo','manchete2','noticia2','manchete3','noticia3','destaque','destaque_sub','editorial'].forEach(k => {
+      np[k] = typeof parsed[k] === 'string' ? parsed[k] : '';
+    });
+  } catch (e) {
+    scroll.innerHTML = '';
+    const er = document.createElement('div'); er.className = 'np-loading';
+    er.textContent = 'Erro: ' + e.message;
+    scroll.appendChild(er);
+    btn.disabled = false;
+    return;
+  }
+
+  const today = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+  scroll.innerHTML = '';
+  renderNewspaper(np, paper, today, scroll);
+
+  const pdfDiv = document.createElement('div');
+  pdfDiv.style.cssText = 'text-align:center;padding:12px 0 8px;';
+  const pdfBtn = document.createElement('button');
+  pdfBtn.style.cssText = 'background:var(--blue2);color:#fff;border:none;padding:8px 20px;border-radius:3px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;';
+  pdfBtn.textContent = '📄 EXPORTAR EM PDF';
+  pdfBtn.addEventListener('click', () => exportPDF(np, paper, today));
+  pdfDiv.appendChild(pdfBtn);
+  scroll.appendChild(pdfDiv);
+  btn.disabled = false;
+}
+
+function renderNewspaper(np, paper, today, scroll) {
+  const ed = document.createElement('div');
+  ed.className = 'np-edition';
+
+  // Cabeçalho
+  const hdr = document.createElement('div'); hdr.className = 'np-hdr';
+  const top = document.createElement('div'); top.className = 'np-hdr-top';
+  ['EDIÇÃO ESPECIAL · OEA 2025', today.toUpperCase(), 'EM SESSÃO'].forEach(t => {
+    const s = document.createElement('span'); s.textContent = t; top.appendChild(s);
+  });
+  hdr.appendChild(top);
+  const masthead = document.createElement('div'); masthead.className = 'np-masthead';
+  masthead.textContent = paper.name; hdr.appendChild(masthead);
+  const subhead = document.createElement('div'); subhead.className = 'np-subhead';
+  subhead.textContent = paper.sub; hdr.appendChild(subhead);
+  const dateline = document.createElement('div'); dateline.className = 'np-dateline';
+  const dl1 = document.createElement('span'); dl1.textContent = 'COBERTURA ESPECIAL · DIREITOS HUMANOS NA AMÉRICA LATINA';
+  const dl2 = document.createElement('span'); dl2.textContent = 'Washington D.C.';
+  dateline.appendChild(dl1); dateline.appendChild(dl2);
+  hdr.appendChild(dateline);
+  ed.appendChild(hdr);
+
+  // Corpo
+  const body = document.createElement('div'); body.className = 'np-body';
+
+  const main = document.createElement('div'); main.className = 'np-main';
+  const headline = document.createElement('div'); headline.className = 'np-headline';
+  headline.textContent = np.manchete; main.appendChild(headline);
+  const byline = document.createElement('div'); byline.className = 'np-byline';
+  byline.textContent = 'Correspondente especial · ' + today; main.appendChild(byline);
+  const article = document.createElement('div'); article.className = 'np-article';
+  setMultiline(article, np.artigo); main.appendChild(article);
+  const sub = document.createElement('div');
+  sub.style.cssText = 'font-size:8px;font-style:italic;color:var(--muted);margin-top:4px';
+  sub.textContent = np.subtitulo; main.appendChild(sub);
+  body.appendChild(main);
+
+  function side(head, txt, extra) {
+    const s = document.createElement('div'); s.className = 'np-side';
+    const h = document.createElement('div'); h.className = 'np-side-head'; h.textContent = head; s.appendChild(h);
+    const t = document.createElement('div'); t.className = 'np-side-text'; t.textContent = txt; s.appendChild(t);
+    if (extra) {
+      const eLabel = document.createElement('div');
+      eLabel.style.cssText = 'margin-top:7px;font-size:8px;font-weight:700;color:var(--blue2);text-transform:uppercase';
+      eLabel.textContent = 'Análise';
+      s.appendChild(eLabel);
+      const eTxt = document.createElement('div');
+      eTxt.className = 'np-side-text';
+      eTxt.style.fontStyle = 'italic';
+      eTxt.textContent = extra;
+      s.appendChild(eTxt);
+    }
+    return s;
+  }
+  body.appendChild(side(np.manchete2, np.noticia2));
+  body.appendChild(side(np.manchete3, np.noticia3, np.editorial));
+
+  const prop = document.createElement('div'); prop.className = 'np-prop';
+  const propTxt = document.createElement('div'); propTxt.className = 'np-prop-text';
+  propTxt.textContent = np.destaque; prop.appendChild(propTxt);
+  const propSub = document.createElement('div'); propSub.className = 'np-prop-sub';
+  propSub.textContent = np.destaque_sub; prop.appendChild(propSub);
+  body.appendChild(prop);
+
+  ed.appendChild(body);
+
+  const footer = document.createElement('div'); footer.className = 'np-footer';
+  [paper.name, 'Simulação educacional · OEA Model UN', today].forEach(t => {
+    const s = document.createElement('span'); s.textContent = t; footer.appendChild(s);
+  });
+  ed.appendChild(footer);
+
+  scroll.appendChild(ed);
+}
+
+function exportPDF(np, paper, today) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const margin = 18, pageW = 210, cW = pageW - margin * 2;
+  let y = 18;
+
+  function addText(text, size, color, bold) {
+    doc.setFontSize(size);
+    doc.setTextColor(...(color || [26, 42, 58]));
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    const clean = String(text || '');
+    doc.splitTextToSize(clean, cW).forEach(l => {
+      if (y > 278) { doc.addPage(); y = 18; }
+      doc.text(l, margin, y);
+      y += size * 0.45;
+    });
+    y += 2;
+  }
+
+  doc.setFillColor(26, 58, 107); doc.rect(0, 0, 210, 28, 'F');
+  doc.setFontSize(7); doc.setTextColor(200, 200, 200); doc.setFont('helvetica', 'normal');
+  doc.text('EDIÇÃO ESPECIAL · OEA 2025 · ' + today.toUpperCase(), margin, 8);
+  doc.setFontSize(14); doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold');
+  doc.text(paper.name, margin, 17);
+  doc.setFontSize(7); doc.setTextColor(180, 200, 220); doc.setFont('helvetica', 'normal');
+  doc.text(paper.sub, margin, 23);
+  y = 36;
+  doc.setDrawColor(200, 150, 10); doc.setLineWidth(0.8); doc.line(margin, y, pageW - margin, y); y += 6;
+
+  addText(np.manchete, 15, [26, 58, 107], true);
+  addText('Correspondente especial · ' + today + (np.subtitulo ? ' — ' + np.subtitulo : ''), 8, [100, 120, 140], false);
+  doc.setDrawColor(197, 213, 232); doc.setLineWidth(0.3); doc.line(margin, y, pageW - margin, y); y += 4;
+  addText(np.artigo, 10, [26, 42, 58], false); y += 3;
+  doc.setDrawColor(197, 213, 232); doc.line(margin, y, pageW - margin, y); y += 4;
+  addText(np.manchete2, 12, [26, 58, 107], true); addText(np.noticia2, 10, [26, 42, 58], false); y += 3;
+  doc.setDrawColor(197, 213, 232); doc.line(margin, y, pageW - margin, y); y += 4;
+  addText(np.manchete3, 12, [26, 58, 107], true); addText(np.noticia3, 10, [26, 42, 58], false); y += 3;
+  doc.setDrawColor(197, 213, 232); doc.line(margin, y, pageW - margin, y); y += 4;
+  addText('ANÁLISE EDITORIAL', 8, [42, 82, 152], true); addText(np.editorial, 10, [26, 42, 58], false); y += 4;
+  if (y > 262) { doc.addPage(); y = 18; }
+  doc.setFillColor(26, 58, 107); doc.rect(margin, y, cW, 18, 'F');
+  doc.setFontSize(10); doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold');
+  doc.text(doc.splitTextToSize(String(np.destaque || '').toUpperCase(), cW - 8), margin + 4, y + 7);
+  doc.setFontSize(8); doc.setTextColor(180, 200, 220); doc.setFont('helvetica', 'normal');
+  doc.text(String(np.destaque_sub || ''), margin + 4, y + 15);
+  doc.setFontSize(7); doc.setTextColor(140, 160, 180);
+  doc.text(paper.name + ' · Simulação educacional · OEA Model UN · ' + today, margin, 290);
+  doc.save(paper.name.replace(/[\s/]/g, '_') + '_' + new Date().toISOString().slice(0, 10) + '.pdf');
+}
+
+// ─── MAPA ─────────────────────────────────────────────────
 function initMap() {
   const tooltip = document.getElementById('mapTooltip');
   document.querySelectorAll('.country').forEach(g => {
-    g.addEventListener('mouseenter',function(e){tooltip.innerHTML='<strong>'+this.dataset.name+'</strong><br><span style="font-size:9px;opacity:0.9">'+this.dataset.info+'</span>';tooltip.classList.remove('hidden');});
-    g.addEventListener('mousemove',function(e){tooltip.style.left=(e.clientX+12)+'px';tooltip.style.top=(e.clientY-10)+'px';});
-    g.addEventListener('mouseleave',()=>tooltip.classList.add('hidden'));
-    g.addEventListener('click',function(){document.getElementById('inp').value='Qual a situação dos direitos humanos em '+this.dataset.name+' segundo a sua delegação?';switchTab('chat');});
+    g.addEventListener('mouseenter', function () {
+      tooltip.innerHTML = '';
+      const s = document.createElement('strong'); s.textContent = this.dataset.name || '';
+      const br = document.createElement('br');
+      const i = document.createElement('span');
+      i.style.cssText = 'font-size:9px;opacity:0.9';
+      i.textContent = this.dataset.info || '';
+      tooltip.appendChild(s); tooltip.appendChild(br); tooltip.appendChild(i);
+      tooltip.classList.remove('hidden');
+    });
+    g.addEventListener('mousemove', function (e) {
+      tooltip.style.left = (e.clientX + 12) + 'px';
+      tooltip.style.top = (e.clientY - 10) + 'px';
+    });
+    g.addEventListener('mouseleave', () => tooltip.classList.add('hidden'));
+    g.addEventListener('click', function () {
+      document.getElementById('inp').value = 'Qual a situação dos direitos humanos em ' + (this.dataset.name || '') + ' segundo a sua delegação?';
+      switchTab('chat');
+    });
   });
 }
 
+// ─── TABS ─────────────────────────────────────────────────
 function switchTab(t) {
-  ['chat','resolution','vote','newspaper','map'].forEach((id,i)=>{
-    document.querySelectorAll('.tab')[i].classList.toggle('active',id===t);
-    document.getElementById('tab-'+id).classList.toggle('active',id===t);
+  ['chat', 'resolution', 'vote', 'newspaper', 'map'].forEach((id, i) => {
+    document.querySelectorAll('.tab')[i].classList.toggle('active', id === t);
+    document.getElementById('tab-' + id).classList.toggle('active', id === t);
   });
-  if(t==='map')setTimeout(initMap,100);
+  if (t === 'map') setTimeout(initMap, 100);
 }
+
+// ─── BOOT ─────────────────────────────────────────────────
+document.getElementById('btnSaveName').addEventListener('click', saveStudentName);
+document.getElementById('studentNameInput').addEventListener('keydown', e => { if (e.key === 'Enter') saveStudentName(); });
+document.getElementById('studentCodeInput').addEventListener('keydown', e => { if (e.key === 'Enter') saveStudentName(); });
+document.getElementById('sbtn').addEventListener('click', send);
+document.getElementById('inp').addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+document.getElementById('resBtn').addEventListener('click', sendResolution);
+document.getElementById('resClearBtn').addEventListener('click', clearResForm);
+document.getElementById('npGenBtn').addEventListener('click', generateNewspaper);
+document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+document.querySelectorAll('.np-btn').forEach(b => b.addEventListener('click', () => selectNP(b.dataset.np)));
+document.querySelectorAll('.actbtn[data-quick]').forEach(b => b.addEventListener('click', () => quick(b.dataset.quick)));
 
 renderDelegates();
 checkInit();

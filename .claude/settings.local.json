@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:api.cdnjs.com)",
+      "Bash(openssl dgst *)",
+      "Bash(awk '{print $NF}')"
+    ]
+  }
+}

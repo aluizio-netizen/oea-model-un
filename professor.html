@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://oea-model-un-default-rtdb.firebaseio.com; object-src 'none'; base-uri 'none'; form-action 'none';"/>
 <title>OEA — Painel do Professor</title>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
@@ -98,9 +99,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
   <div class="modal">
     <h2>🔐 Painel do Professor</h2>
     <p>Digite a senha do professor para acessar o painel de monitoramento.</p>
-    <input type="password" id="senhaInput" placeholder="Senha..." onkeydown="if(event.key==='Enter')verificarSenha()"/>
-    <button class="modal-btn" onclick="verificarSenha()">Entrar →</button>
-    <p style="margin-top:10px;font-size:10px;color:var(--muted);text-align:center">Senha padrão: <strong>professor2025</strong></p>
+    <input type="password" id="senhaInput" placeholder="Senha..." autocomplete="off" maxlength="64"/>
+    <button class="modal-btn" id="btnSenha">Entrar →</button>
+    <p style="margin-top:10px;font-size:10px;color:var(--muted);text-align:center">Solicite a senha ao administrador da sala.</p>
   </div>
 </div>
 
@@ -114,7 +115,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
   <div class="badge">MONITORANDO</div>
   <div class="hdr-right">
     <span style="font-size:10px;color:rgba(255,255,255,0.8)" id="hdrTurma">Nenhuma sala</span>
-    <button class="hdr-btn" onclick="exportarRelatorio()">📊 Exportar Relatório</button>
+    <button class="hdr-btn" id="btnExportar">📊 Exportar Relatório</button>
   </div>
 </div>
 
@@ -127,8 +128,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Open S
     </div>
     <div class="turma-bar">
       <!-- O professor digita o código da sala que os alunos usaram (ex: OEA4F2X) -->
-      <input class="turma-input" type="text" id="turmaInput" placeholder="Código da sala (ex: OEA4F2X)" onkeydown="if(event.key==='Enter')conectarSala()"/>
-      <button class="turma-btn" onclick="conectarSala()">▶ Monitorar</button>
+      <input class="turma-input" type="text" id="turmaInput" placeholder="Código da sala (ex: OEA4F2X)" maxlength="32"/>
+      <button class="turma-btn" id="btnConectar">▶ Monitorar</button>
     </div>
     <div class="panel-scroll" id="alunosList">
       <div class="empty-feed">
@@ -195,7 +196,12 @@ const app = initializeApp(firebaseConfig);
 const db  = getDatabase(app);
 
 // ── STATE ────────────────────────────────────────────
-const SENHA = 'professor2025';
+// Hash SHA-256 da senha. Para gerar uma nova senha, rode no console:
+//   crypto.subtle.digest('SHA-256', new TextEncoder().encode('SUA_SENHA'))
+//     .then(b => console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')))
+// e cole o valor abaixo. (A senha continua sendo apenas um portão leve — o controle
+// real de acesso aos dados depende das regras do Firebase Realtime Database.)
+const SENHA_HASH = '4a535bba741dd31422ffdb8e1d3c9fa8037a43d3f56b599340aabc8082b49b16'; // SHA-256 de "professor2025" — TROQUE em produção
 let salaAtual  = '';
 let unsubPlayers = null, unsubChat = null, unsubVotes = null;
 let dadosPlayers = {};   // uid → player
@@ -203,13 +209,27 @@ let dadosChat    = {};   // key → msg
 let dadosVotes   = {};   // key → vote
 let alunoSelecionado = null;
 
+async function sha256Hex(s) {
+  const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(String(s||'')));
+  return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2,'0')).join('');
+}
+
+function constEq(a, b) {
+  if (a.length !== b.length) return false;
+  let r = 0;
+  for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return r === 0;
+}
+
 // ── SENHA ────────────────────────────────────────────
-window.verificarSenha = function() {
-  const s = document.getElementById('senhaInput').value;
-  if (s === SENHA) {
+window.verificarSenha = async function() {
+  const inp = document.getElementById('senhaInput');
+  const s = inp.value;
+  const hash = await sha256Hex(s);
+  if (constEq(hash, SENHA_HASH)) {
+    inp.value = '';
     document.getElementById('modalSenha').classList.add('hidden');
   } else {
-    const inp = document.getElementById('senhaInput');
     inp.style.borderColor = '#b02020';
     setTimeout(() => inp.style.borderColor = '', 1500);
   }
@@ -217,7 +237,8 @@ window.verificarSenha = function() {
 
 // ── CONECTAR SALA ────────────────────────────────────
 window.conectarSala = function() {
-  const code = document.getElementById('turmaInput').value.trim().toUpperCase();
+  const raw = document.getElementById('turmaInput').value.trim().toUpperCase();
+  const code = raw.replace(/[^A-Z0-9_-]/g, '').slice(0, 32);
   if (!code) { alert('Digite o código da sala.'); return; }
 
   // Desliga listeners anteriores
@@ -230,7 +251,9 @@ window.conectarSala = function() {
   alunoSelecionado = null;
 
   document.getElementById('hdrTurma').textContent = 'Sala: ' + code;
-  document.getElementById('resumoStatus').innerHTML = '🟢 Monitorando: <strong>' + code + '</strong>';
+  const stat = document.getElementById('resumoStatus');
+  stat.textContent = '🟢 Monitorando: ';
+  const stBold = document.createElement('strong'); stBold.textContent = code; stat.appendChild(stBold);
   document.getElementById('detalheWrap').innerHTML = '<div class="detalhe-vazio"><div style="font-size:28px">👆</div><div style="font-size:11px">Clique em um delegado<br>para ver o detalhamento</div></div>';
 
   // ── Listener: PLAYERS ──────────────────────────────
@@ -285,7 +308,7 @@ function renderAlunos() {
   const players = Object.entries(dadosPlayers);
 
   if (players.length === 0) {
-    list.innerHTML = '<div class="empty-feed"><div style="font-size:20px;margin-bottom:6px">⏳</div><div>Nenhum delegado na sala ainda.<br>Código: <strong>' + salaAtual + '</strong></div></div>';
+    list.innerHTML = '<div class="empty-feed"><div style="font-size:20px;margin-bottom:6px">⏳</div><div>Nenhum delegado na sala ainda.<br>Código: <strong>' + esc(salaAtual) + '</strong></div></div>';
     return;
   }
 
@@ -302,8 +325,8 @@ function renderAlunos() {
 
     card.innerHTML =
       '<div class="aluno-nome">' + esc(p.name || '—') + '</div>' +
-      '<div class="aluno-pais">' + (p.flag || '') + ' ' + esc(p.charName || '—') + '</div>' +
-      '<div class="aluno-ult">' + (p.region || '') + ' · ' + (p.online ? '🟢 Online' : '⚫ Offline') + '</div>' +
+      '<div class="aluno-pais">' + esc(p.flag || '') + ' ' + esc(p.charName || '—') + '</div>' +
+      '<div class="aluno-ult">' + esc(p.region || '') + ' · ' + (p.online ? '🟢 Online' : '⚫ Offline') + '</div>' +
       '<div style="display:flex;gap:6px;margin-top:6px">' +
         '<span style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:2px 8px;font-size:9px;color:var(--blue2);font-weight:600">💬 ' + msgCount + '</span>' +
         '<span style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:2px 8px;font-size:9px;color:var(--gold);font-weight:600">📜 ' + resCount + '</span>' +
@@ -339,15 +362,15 @@ function renderFeed() {
     div.className = 'feed-item ' + tipo;
 
     const quem = item.flag
-      ? `${item.flag} ${esc(item.charName||'')} <span style="font-weight:400;color:var(--muted)">· ${esc(item.senderName||item.proposedBy||'')}</span>`
+      ? `${esc(item.flag)} ${esc(item.charName||'')} <span style="font-weight:400;color:var(--muted)">· ${esc(item.senderName||item.proposedBy||'')}</span>`
       : esc(item.proposedBy || 'Sistema');
 
     let texto = '';
     if (tipo === 'chat')       texto = esc((item.text||'').substring(0,160));
     else if (tipo === 'resolution') texto = '<strong>📜 ' + esc(item.resType||'Resolução') + ':</strong> ' + esc(item.resTitle||'');
     else if (tipo === 'votacao')    texto = '<strong>🗳️ Votação:</strong> ' + esc(item.resTitle||'') +
-      ' — ✅ ' + (item.results?.favor||0) + ' / ❌ ' + (item.results?.contra||0) + ' / ⬜ ' + (item.results?.abstencao||0);
-    else if (tipo === 'system')     texto = '<em>' + (item.text||'').replace(/<[^>]*>/g,'').substring(0,120) + '</em>';
+      ' — ✅ ' + numOr0(item.results?.favor) + ' / ❌ ' + numOr0(item.results?.contra) + ' / ⬜ ' + numOr0(item.results?.abstencao);
+    else if (tipo === 'system')     texto = '<em>' + esc((item.text||'').substring(0,120)) + '</em>';
 
     const hora = formatTs(item.ts);
 
@@ -374,13 +397,13 @@ function renderDetalhe(uid) {
 
   let html =
     '<div class="detalhe-header">' +
-      '<div class="detalhe-nome">' + (p.flag||'') + ' ' + esc(p.charName||'—') + '</div>' +
+      '<div class="detalhe-nome">' + esc(p.flag||'') + ' ' + esc(p.charName||'—') + '</div>' +
       '<div class="detalhe-sub">Delegado: ' + esc(p.name||'—') + ' · ' + (p.online ? '🟢 Online' : '⚫ Offline') + '</div>' +
       '<div class="detalhe-stats">' +
         '<div class="d-stat"><div class="d-stat-num">' + msgsMeus.length + '</div><div class="d-stat-label">Mensagens</div></div>' +
         '<div class="d-stat"><div class="d-stat-num">' + resMeus.length  + '</div><div class="d-stat-label">Resoluções</div></div>' +
         '<div class="d-stat"><div class="d-stat-num">' + votsMeus.length + '</div><div class="d-stat-label">Votos</div></div>' +
-        '<div class="d-stat"><div class="d-stat-num">' + (p.region||'—') + '</div><div class="d-stat-label">Região</div></div>' +
+        '<div class="d-stat"><div class="d-stat-num">' + esc(p.region||'—') + '</div><div class="d-stat-label">Região</div></div>' +
       '</div>' +
     '</div>' +
     '<div style="font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;font-weight:700">Histórico</div>';
@@ -404,7 +427,7 @@ function renderDetalhe(uid) {
       const hora = formatTs(item.ts);
       let txt = '';
       if (cat === 'chat')       txt = esc((item.text||'').substring(0,300));
-      else if (cat === 'resolution') txt = '<strong>' + esc(item.resType||'Resolução') + ':</strong> ' + esc(item.resTitle||'') + '<br><span style="color:var(--muted);font-size:9px">' + (item.text||'').replace(/<br>/g,' ').replace(/<[^>]*>/g,'').substring(0,200) + '</span>';
+      else if (cat === 'resolution') txt = '<strong>' + esc(item.resType||'Resolução') + ':</strong> ' + esc(item.resTitle||'') + '<br><span style="color:var(--muted);font-size:9px">' + esc(String(item.text||'').replace(/\s+/g,' ').substring(0,200)) + '</span>';
       else if (cat === 'votacao')    txt = '<strong>Votou em:</strong> ' + esc(item.resTitle||'') + ' — ' + (item.voters?.[uid]==='favor'?'✅ A Favor':item.voters?.[uid]==='contra'?'❌ Contra':'⬜ Abstenção');
 
       html +=
@@ -426,11 +449,11 @@ window.exportarRelatorio = function() {
   const res     = Object.values(dadosChat).filter(m => m.type === 'resolution').length;
   const vots    = Object.keys(dadosVotes).length;
 
-  let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Relatório OEA — ' + salaAtual + '</title>';
+  let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Relatório OEA — ' + esc(salaAtual) + '</title>';
   html += '<style>body{font-family:Arial,sans-serif;padding:24px;max-width:900px;margin:0 auto}h1{color:#1a3a6b}h2{color:#2a5298;border-bottom:1px solid #ccc;padding-bottom:4px;margin-top:20px}table{width:100%;border-collapse:collapse;margin-top:8px}td,th{border:1px solid #ddd;padding:6px 10px;text-align:left;font-size:12px}th{background:#e8f0f8;color:#1a3a6b;font-weight:700}.footer{margin-top:24px;font-size:10px;color:#999;text-align:center}</style>';
   html += '</head><body>';
   html += '<h1>📋 Relatório de Sessão — OEA Model UN</h1>';
-  html += '<p><strong>Sala:</strong> ' + salaAtual + ' · <strong>Data:</strong> ' + new Date().toLocaleDateString('pt-BR') + '</p>';
+  html += '<p><strong>Sala:</strong> ' + esc(salaAtual) + ' · <strong>Data:</strong> ' + esc(new Date().toLocaleDateString('pt-BR')) + '</p>';
   html += '<p><strong>Delegados:</strong> ' + players.length + ' · <strong>Mensagens:</strong> ' + msgs + ' · <strong>Resoluções:</strong> ' + res + ' · <strong>Votações:</strong> ' + vots + '</p>';
 
   html += '<h2>Delegados</h2><table><tr><th>Nome</th><th>País</th><th>Região</th><th>Status</th><th>Mensagens</th><th>Resoluções</th></tr>';
@@ -438,20 +461,20 @@ window.exportarRelatorio = function() {
     const uid2 = Object.entries(dadosPlayers).find(([,v])=>v===p)?.[0]||'';
     const mc = Object.values(dadosChat).filter(m=>m.uid===uid2&&m.type==='chat').length;
     const rc = Object.values(dadosChat).filter(m=>m.uid===uid2&&m.type==='resolution').length;
-    html += '<tr><td>' + esc(p.name||'—') + '</td><td>' + (p.flag||'') + ' ' + esc(p.charName||'—') + '</td><td>' + esc(p.region||'—') + '</td><td>' + (p.online?'Online':'Offline') + '</td><td>' + mc + '</td><td>' + rc + '</td></tr>';
+    html += '<tr><td>' + esc(p.name||'—') + '</td><td>' + esc(p.flag||'') + ' ' + esc(p.charName||'—') + '</td><td>' + esc(p.region||'—') + '</td><td>' + (p.online?'Online':'Offline') + '</td><td>' + mc + '</td><td>' + rc + '</td></tr>';
   });
   html += '</table>';
 
   html += '<h2>Mensagens do Debate</h2><table><tr><th>Delegado</th><th>País</th><th>Mensagem</th></tr>';
   Object.values(dadosChat).filter(m=>m.type==='chat').forEach(m=>{
-    html += '<tr><td>' + esc(m.senderName||'—') + '</td><td>' + (m.flag||'') + ' ' + esc(m.charName||'—') + '</td><td>' + esc((m.text||'').substring(0,300)) + '</td></tr>';
+    html += '<tr><td>' + esc(m.senderName||'—') + '</td><td>' + esc(m.flag||'') + ' ' + esc(m.charName||'—') + '</td><td>' + esc((m.text||'').substring(0,300)) + '</td></tr>';
   });
   html += '</table>';
 
   if (res > 0) {
     html += '<h2>Resoluções</h2><table><tr><th>Tipo</th><th>Título</th><th>Proponente</th></tr>';
     Object.values(dadosChat).filter(m=>m.type==='resolution').forEach(m=>{
-      html += '<tr><td>' + esc(m.resType||'Resolução') + '</td><td>' + esc(m.resTitle||'—') + '</td><td>' + (m.flag||'') + ' ' + esc(m.charName||'—') + '</td></tr>';
+      html += '<tr><td>' + esc(m.resType||'Resolução') + '</td><td>' + esc(m.resTitle||'—') + '</td><td>' + esc(m.flag||'') + ' ' + esc(m.charName||'—') + '</td></tr>';
     });
     html += '</table>';
   }
@@ -459,23 +482,25 @@ window.exportarRelatorio = function() {
   if (vots > 0) {
     html += '<h2>Votações</h2><table><tr><th>Resolução</th><th>A Favor</th><th>Contra</th><th>Abstenção</th></tr>';
     Object.values(dadosVotes).forEach(v=>{
-      html += '<tr><td>' + esc(v.resTitle||'—') + '</td><td>' + (v.results?.favor||0) + '</td><td>' + (v.results?.contra||0) + '</td><td>' + (v.results?.abstencao||0) + '</td></tr>';
+      html += '<tr><td>' + esc(v.resTitle||'—') + '</td><td>' + numOr0(v.results?.favor) + '</td><td>' + numOr0(v.results?.contra) + '</td><td>' + numOr0(v.results?.abstencao) + '</td></tr>';
     });
     html += '</table>';
   }
 
-  html += '<div class="footer">Simulação educacional · OEA Model UN · Gerado em ' + new Date().toLocaleString('pt-BR') + '</div></body></html>';
+  html += '<div class="footer">Simulação educacional · OEA Model UN · Gerado em ' + esc(new Date().toLocaleString('pt-BR')) + '</div></body></html>';
 
   const b = new Blob([html],{type:'text/html'});
   const u = URL.createObjectURL(b);
   const a = document.createElement('a');
-  a.href=u; a.download='relatorio_oea_'+salaAtual+'_'+new Date().toISOString().slice(0,10)+'.html';
+  const safeRoom = String(salaAtual).replace(/[^A-Z0-9_-]/gi,'');
+  a.href=u; a.download='relatorio_oea_'+safeRoom+'_'+new Date().toISOString().slice(0,10)+'.html';
   a.style.display='none'; document.body.appendChild(a); a.click();
   setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(u);},1000);
 };
 
 // ── HELPERS ───────────────────────────────────────────
-function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function numOr0(v){ const n=Number(v); return Number.isFinite(n)?n:0; }
 
 function formatTs(ts) {
   if (!ts) return '';
@@ -496,6 +521,13 @@ function labelTipo(tipo) {
     votacao:    '🗳️ Votação',
   }[tipo] || tipo;
 }
+
+// ── LISTENERS ────────────────────────────────────────
+document.getElementById('btnSenha').addEventListener('click', () => window.verificarSenha());
+document.getElementById('senhaInput').addEventListener('keydown', e => { if (e.key === 'Enter') window.verificarSenha(); });
+document.getElementById('btnConectar').addEventListener('click', () => window.conectarSala());
+document.getElementById('turmaInput').addEventListener('keydown', e => { if (e.key === 'Enter') window.conectarSala(); });
+document.getElementById('btnExportar').addEventListener('click', () => window.exportarRelatorio());
 </script>
 </body>
 </html>
